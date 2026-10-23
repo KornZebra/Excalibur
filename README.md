@@ -29,7 +29,7 @@
   <img src="https://img.shields.io/badge/LLM-OpenAI%20Compatible-412991?style=for-the-badge&logo=openai&logoColor=white" alt="LLM" />
 </p>
 
-给一道题，拿一个 Flag —— 理题、侦察、分析、利用、提取、复盘，全流程自动闭环。
+理题、侦察、分析、利用、提取、复盘，全流程自动闭环。
 
 *无数长夜之下，骑士挥剑奔赴黎明，自幽沉湖心递来的锋芒，曾许诺予执剑者破晓的权柄。*
 
