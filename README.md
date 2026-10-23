@@ -207,8 +207,23 @@ Excalibur/
 
 ---
 
+## 🙏 参考与致谢
+
+本项目的部分设计思路与交互形态参考了以下开源项目，在此致谢：
+
+| 项目 | 参考内容 |
+|---|---|
+| [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) | 前端交互：对话轮次导航轨（TurnNavigator）的固定节距梯子与指针命中模型、模型选择器（ModelSelect）的布局与交互 |
+| [AIPentest/CyberStrikeAI](https://github.com/AIPentest/CyberStrikeAI) | 前端交互：对话轮次指示条的形态设计 |
+| [oritera/Cairn](https://github.com/oritera/Cairn) | 架构设计：以 Fact / Intent / Hint 三原语建模状态空间搜索、Dispatcher 单进程调度与并发限流、上下文外置等思路 |
+
+以上项目的代码版权归各自作者所有，分别遵循 MIT、Apache-2.0、AGPL-3.0 许可证；
+本项目仅借鉴其设计思路，并在自身技术栈（Python + 原生 JavaScript）上独立实现。
+
+README 徽章样式参考 [Badges4-README.md-Profile](https://github.com/alexandresanlim/Badges4-README.md-Profile)。
+
+---
+
 ## 📄 许可证
 
 本项目基于 [MIT License](LICENSE) 开源。
-
-<div align="center"><sub>README 徽章样式参考 <a href="https://github.com/alexandresanlim/Badges4-README.md-Profile">Badges4-README.md-Profile</a></sub></div>
