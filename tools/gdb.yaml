@@ -1,0 +1,41 @@
+name: "gdb"
+command: "gdb"
+args: ["-q", "-batch", "-ex", "run"]
+enabled: true
+short_description: "调试器：binary + -ex 命令批处理，避免交互挂死"
+description: |
+  默认行为：以批处理模式调试（-q 静默、-batch 执行完即退出、-ex run 先跑起来），
+  这是防挂死的关键：不加 -batch 会停在 (gdb) 提示符等待输入并触发超时。
+  参数：binary 为被调试程序（必填，放最前）；commands 追加/覆盖要执行的
+  GDB 命令（-ex，可写多条用分号连接，如 "b *main"、"info registers"、
+  "x/20gx $rsp"、"bt"、"vmmap"）；core 指定 core dump 文件（-c）；
+  additional_args 追加原始参数（如 --args 传参前需注意与默认 -ex run 冲突）。
+  常见坑：attach 正在运行的进程需 ptrace 权限（可能需 root 或关闭 ptrace_scope）；
+  若装了 pwndbg/gef，可在 commands 中使用 vmmap、telescope、heap 等扩展命令。
+  示例：gdb -q -batch -ex run -ex "bt" -ex "info registers" ./chall
+        gdb -q -batch -ex "b *main+42" -ex run -ex "x/32gx $rsp" ./chall
+parameters:
+  - name: "binary"
+    type: "string"
+    description: "被调试的可执行文件路径"
+    required: true
+    position: 1
+  - name: "commands"
+    type: "string"
+    description: "GDB 命令，如 \"b *main\" 或 \"bt; info registers\""
+    flag: "-ex"
+    required: false
+  - name: "core"
+    type: "string"
+    description: "core dump 文件路径"
+    flag: "-c"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数"
+    format: "positional"
+    required: false
+category: "pwn"
+requires_root: false
+interactive: false
+notes: "必须 -batch；attach 他人进程或受限 ptrace 时可能需要 root"

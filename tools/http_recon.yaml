@@ -1,0 +1,49 @@
+name: "http_recon"
+command: "curl"
+args: ["-sS", "-i", "-L", "--max-time", "15"]
+enabled: true
+short_description: "HTTP 侦察：url + 可选 method/header/data，取响应头"
+description: |
+  默认行为：用 curl 静默拉取目标 URL，打印响应头与正文（-i），跟随跳转（-L），
+  单次请求最长 15 秒（--max-time）以避免挂死。
+  参数：url 为目标地址（必填，需含 http:// 或 https://）；method 指定请求方法
+  （-X，如 GET/POST/PUT/OPTIONS）；header 添加请求头（-H，如 "Host: flag.ctf"）；
+  data 提交请求体（-d，如 "user=admin&pass=1"）；insecure 为 true 时跳过 TLS
+  证书校验（-k，HTTPS 自签名靶机常用）；additional_args 追加原始参数。
+  常见坑：想看 30x 原始响应请改用 curl 工具去掉 -L；带 Cookie 时注意引号；
+  默认 -i 会混入响应头，解析正文时需自行截断。
+  示例：curl -sS -i -L --max-time 15 http://10.0.0.5/
+        curl -sS -i -X OPTIONS -H "Host: flag.ctf" http://10.0.0.5/
+parameters:
+  - name: "url"
+    type: "string"
+    description: "目标 URL，需含 scheme，如 http://10.0.0.5:8080/"
+    required: true
+    position: 1
+  - name: "method"
+    type: "string"
+    description: "请求方法 GET/POST/PUT/OPTIONS 等"
+    flag: "-X"
+    required: false
+  - name: "header"
+    type: "string"
+    description: "请求头，如 \"Host: flag.ctf\" 或 \"Cookie: a=b\""
+    flag: "-H"
+    required: false
+  - name: "data"
+    type: "string"
+    description: "请求体，如 \"user=admin&pass=1\""
+    flag: "-d"
+    required: false
+  - name: "insecure"
+    type: "boolean"
+    description: "为 true 时跳过 TLS 证书校验（-k）"
+    flag: "-k"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数"
+    format: "positional"
+    required: false
+category: "recon"
+requires_root: false

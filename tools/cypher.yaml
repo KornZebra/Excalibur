@@ -1,0 +1,37 @@
+name: "cypher"
+command: "python3"
+args: ["{{ROOT}}/tools/scripts/cypher.py"]
+enabled: true
+short_description: "编码/古典密码一键尝试：mode + input（auto 全试）"
+description: |
+  默认行为：调用项目自研脚本 {{ROOT}}/tools/scripts/cypher.py，对输入做常见编码与
+  古典密码的解码/尝试，auto 模式会依次尝试 base64、base32、hex、url、凯撒、
+  ROT13、摩斯、Atbash、培根、二进制等。
+  参数：mode 为解码模式（必填，choices：auto/caesar/rot13/base64/base32/hex/
+  url/morse/atbash/vigenere/railfence/bacon/binary）；
+  input 为待处理的字符串或文件内容（必填，含空格或特殊字符时整体加引号）；
+  additional_args 追加原始参数。
+  常见坑：多层编码需反复迭代（解出一层后把结果再喂给 auto）；
+  凯撒/Vigenere 等需要密钥的模式在 auto 下只做无钥尝试，若已知密钥需单独处理；
+  binary/morse 对分隔符敏感，注意保留原始格式。
+  示例：python3 {{ROOT}}/tools/scripts/cypher.py auto "SGVsbG9Xb3JsZA=="
+        python3 {{ROOT}}/tools/scripts/cypher.py caesar "Khoor Zruog"
+parameters:
+  - name: "mode"
+    type: "string"
+    description: "解码模式，auto 会依次尝试常见编码/古典密码"
+    required: true
+    format: "positional"
+    choices: ["auto", "caesar", "rot13", "base64", "base32", "hex", "url", "morse", "atbash", "vigenere", "railfence", "bacon", "binary"]
+  - name: "input"
+    type: "string"
+    description: "待处理的字符串（含特殊字符时整体加引号）"
+    required: true
+    format: "positional"
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数"
+    format: "positional"
+    required: false
+category: "crypto"
+requires_root: false

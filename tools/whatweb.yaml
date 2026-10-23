@@ -1,0 +1,44 @@
+name: "whatweb"
+command: "whatweb"
+args: ["--color=never", "-a", "3"]
+enabled: true
+short_description: "Web 指纹识别：target + 可选 UA/插件/强度"
+description: |
+  默认行为：以强度 3（-a 3）识别目标站点的 CMS、框架、服务器、JS 库等指纹，
+  --color=never 便于日志记录。参数：target 为目标 URL 或主机（必填）；
+  user_agent 自定义 UA（--user-agent）；plugins 指定插件或插件集（--plugin，
+  如 -p robots-txt,meta-author）；aggression 覆盖强度（template -a{value}，
+  1 隐蔽 / 3 主动 / 4 重载）；
+  additional_args 追加原始参数（如 --follow-redirect=always）。
+  常见坑：默认 args 已含 -a 3，若同时传 aggression 会重复，建议只传其一；
+  强度过高会产生大量请求，注意时限。
+  示例：whatweb --color=never -a 3 http://10.0.0.5/
+        whatweb --color=never -p robots-txt,meta-author http://10.0.0.5/
+parameters:
+  - name: "target"
+    type: "string"
+    description: "目标 URL 或主机，如 http://10.0.0.5/"
+    required: true
+    position: 1
+  - name: "user_agent"
+    type: "string"
+    description: "自定义 User-Agent"
+    flag: "--user-agent"
+    required: false
+  - name: "plugins"
+    type: "string"
+    description: "指定插件/插件集，如 robots-txt,meta-author"
+    flag: "--plugin"
+    required: false
+  - name: "aggression"
+    type: "string"
+    description: "识别强度 1-4，覆盖默认 -a 3"
+    template: "-a{value}"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --follow-redirect=always"
+    format: "positional"
+    required: false
+category: "web"
+requires_root: false

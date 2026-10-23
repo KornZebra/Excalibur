@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ctf-agent"
+version = "1.0.2"
+description = "CTF-Agent：以 LLM 为大脑、MCP 风格工具为手脚的 CTF 自主解题智能体平台（仅限 CTF 竞赛/自建靶场/已授权环境）"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "ctf-agent contributors" }]
+keywords = ["ctf", "security", "llm", "agent", "mcp", "react"]
+
+dependencies = [
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "PyYAML>=6.0",
+    "openai>=1.40",
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+    "sse-starlette>=2.1",
+    "httpx>=0.27",
+    "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+# M5 增强项：向量检索 / 视觉旁路 / 外部 MCP 工具服务器
+mcp = ["mcp>=1.2"]
+knowledge = ["numpy>=1.26"]
+vision = ["pillow>=10.2"]
+dev = [
+    "pytest>=8.2",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.5",
+    "mypy>=1.10",
+]
+
+[project.scripts]
+ctfagent = "ctfagent.cli:main"
+
+[tool.setuptools]
+packages = [
+    "ctfagent",
+    "ctfagent.models",
+    "ctfagent.agent",
+    "ctfagent.tools",
+    "ctfagent.tools.builtin",
+    "ctfagent.agents",
+    "ctfagent.knowledge",
+    "ctfagent.storage",
+    "ctfagent.api",
+    # -- v2 增量包 --
+    "ctfagent.state",
+    "ctfagent.orchestrator",
+    "ctfagent.observer",
+]
+
+# 迁移 SQL 必须随包分发，否则 pip 安装成 wheel 后 `MIGRATIONS[2]` 会因缺文件而失败
+[tool.setuptools.package-data]
+"ctfagent.storage" = ["migrations/*.sql"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = [".venv", "workspace", "data", ".dev", "**/*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+# E501: 行宽由 formatter 兜底（中文注释按显示宽度）；B008: FastAPI 依赖注入惯用函数调用做默认值。
+# ASYNC109/230/240: 工具处理器对 workspace 内小文件/短命令刻意使用同步 I/O——
+#   长命令一律走 ProcessExecutor（asyncio subprocess + 超时杀进程组），同步读写的都是 KB 级本地文件，
+#   改造成线程池只会增加复杂度而无实际收益。详见 DECISIONS.md。
+ignore = ["E501", "B008", "ASYNC109", "ASYNC230", "ASYNC240"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+ignore_missing_imports = true
+disallow_untyped_defs = false
+exclude = ["^tools/scripts/", "^web/", "^run\\.py$"]

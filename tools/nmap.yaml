@@ -1,0 +1,45 @@
+name: "nmap"
+command: "nmap"
+args: ["-sT", "-sV"]
+enabled: true
+short_description: "端口/服务扫描：target + 可选 ports/脚本/时序"
+description: |
+  默认行为：以 TCP connect 扫描（-sT）加服务版本探测（-sV）对目标做最小必要探测，
+  仅用于 CTF 靶机与自建授权环境。
+  参数：target 为目标主机或网段（必填）；ports 指定端口范围（-p，如 22,80,443 或 1-1000）；
+  scripts 指定 NSE 脚本（--script，如 http-title,smb-os-discovery，vuln 类很慢）；
+  timing 为时序模板（-T0~-T5，内网靶机建议 -T4）；additional_args 追加原始参数。
+  常见坑：-sS 半开扫描、-sU UDP 扫描、-O 系统识别都需要 root，本配方默认 -sT 规避权限问题；
+  全端口扫描（-p-）耗时长，容易触发执行超时；UDP 扫描极慢，谨慎使用。
+  示例：nmap -sT -sV -T4 -p 1-1000 10.0.0.5
+        nmap -sT --script http-title,http-headers -p 80,8080 10.0.0.5
+  仅可对题目授权目标扫描，禁止扫描清单外主机。
+parameters:
+  - name: "target"
+    type: "string"
+    description: "目标主机/网段（仅限题目环境），如 10.0.0.5 或 10.0.0.0/24"
+    required: true
+    position: 1
+  - name: "ports"
+    type: "string"
+    description: "端口范围，如 22,80,443 或 1-1000"
+    flag: "-p"
+    required: false
+  - name: "scripts"
+    type: "string"
+    description: "NSE 脚本，如 http-title,http-headers,smb-os-discovery"
+    flag: "--script"
+    required: false
+  - name: "timing"
+    type: "string"
+    description: "时序模板 T0-T5，内网建议 T4"
+    template: "-T{value}"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -Pn -n --open"
+    format: "positional"
+    required: false
+category: "recon"
+requires_root: false
+notes: "-sS/-sU/-O 需要 root；默认 -sT 不需要"

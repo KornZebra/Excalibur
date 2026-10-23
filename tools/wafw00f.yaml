@@ -1,0 +1,38 @@
+name: "wafw00f"
+command: "wafw00f"
+args: []
+enabled: true
+short_description: "WAF 识别：target + 可选 findall/详细模式"
+description: |
+  默认行为：向目标发起探测请求，识别其前方是否存在 WAF 及厂商类型，
+  为后续绕过策略提供依据。参数：target 为目标 URL（必填）；
+  findall 为 true 时尝试识别所有匹配的 WAF（-a，而非命中即停）；
+  verbose 为 true 时输出更详细过程（-v）；additional_args 追加原始参数
+  （如 -p http://127.0.0.1:8080 走代理）。
+  常见坑：WAF 识别依赖特征请求，可能被目标记录，仅限授权靶场使用；
+  内网靶机通常没有 WAF，返回 "No WAF detected" 属正常结果。
+  示例：wafw00f http://10.0.0.5/
+        wafw00f -a -v http://10.0.0.5/
+parameters:
+  - name: "target"
+    type: "string"
+    description: "目标 URL，如 http://10.0.0.5/"
+    required: true
+    position: 1
+  - name: "findall"
+    type: "boolean"
+    description: "为 true 时识别所有匹配的 WAF（-a）"
+    flag: "-a"
+    required: false
+  - name: "verbose"
+    type: "boolean"
+    description: "为 true 时输出详细过程（-v）"
+    flag: "-v"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -p http://127.0.0.1:8080"
+    format: "positional"
+    required: false
+category: "web"
+requires_root: false

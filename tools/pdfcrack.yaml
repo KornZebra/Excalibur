@@ -1,0 +1,52 @@
+name: "pdfcrack"
+command: "pdfcrack"
+args: []
+enabled: true
+short_description: "PDF 口令爆破：pdf(-f) + 字典/字符集"
+description: |
+  默认行为：对加密 PDF 做口令恢复，支持字典与暴力两种模式，结果直接打印到 stdout。
+  参数：pdf 为待爆破的 PDF 文件（-f，必填）；
+  wordlist 为字典路径（-w，如 rockyou.txt，优先尝试）；
+  charset 为暴力字符集（-c，如 0123456789 数字、abcdefghijklmnopqrstuvwxyz 小写，
+  配 min_length/max_length）；
+  min_length 指定最小口令长度（-n，暴力模式必给）；
+  max_length 指定最大口令长度（-m）；additional_args 追加原始参数（如 -p 已知前缀）。
+  常见坑：不指定 -w/-c 会直接报错；暴力模式极慢，先试空口令与字典；
+  部分 PDF 有多种加密算法，pdfcrack 只管用户口令（打开口令）；
+  解出口令后用 qpdf --decrypt 或 pdftotext 提取内容。
+  示例：pdfcrack -f {{WORKSPACE}}/chall.pdf -w /usr/share/wordlists/rockyou.txt
+        pdfcrack -f {{WORKSPACE}}/chall.pdf -c 0123456789 -n 1 -m 6
+parameters:
+  - name: "pdf"
+    type: "string"
+    description: "待爆破的加密 PDF 文件路径（-f）"
+    flag: "-f"
+    required: true
+  - name: "wordlist"
+    type: "string"
+    description: "字典文件路径（-w）"
+    flag: "-w"
+    required: false
+  - name: "charset"
+    type: "string"
+    description: "暴力字符集（-c），如 0123456789"
+    flag: "-c"
+    required: false
+  - name: "min_length"
+    type: "integer"
+    description: "最小口令长度（-n）"
+    flag: "-n"
+    required: false
+  - name: "max_length"
+    type: "integer"
+    description: "最大口令长度（-m）"
+    flag: "-m"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数"
+    format: "positional"
+    required: false
+category: "misc"
+requires_root: false
+interactive: false

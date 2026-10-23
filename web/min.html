@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>CTF Codec Toolbox</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/min.css">
+<script>
+/* 极简隐藏模式（U10/U11）：沿用主界面保存的主题；缺省用暗色（更隐蔽）。
+   必须在样式生效前设置，避免首屏闪主题。 */
+(function () {
+  var themes = ['light', 'dark', 'retro'];
+  var stored = null;
+  try { stored = window.localStorage.getItem('ctfa.theme'); } catch (e) { stored = null; }
+  document.documentElement.setAttribute('data-theme',
+    themes.indexOf(stored) >= 0 ? stored : 'dark');
+})();
+</script>
+</head>
+<body class="mn-body">
+
+<div id="min" data-face="ai">
+
+  <!-- ===================== 面 A：AI 解题（默认隐藏于伪装之下） ===================== -->
+  <div class="mn-face" id="face-ai">
+
+    <!-- 顶栏：只有一个菜单按钮 + 状态文字 -->
+    <header class="mn-top">
+      <button type="button" class="mn-icon" id="mn-menu" aria-label="会话列表" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+      </button>
+      <span class="mn-status" id="mn-status" data-tone="idle">就绪</span>
+      <span class="mn-brand">湖中剑</span>
+    </header>
+
+    <!-- 会话列表抽屉 -->
+    <aside class="mn-drawer" id="mn-drawer" hidden aria-label="会话列表">
+      <div class="mn-drawer-head">
+        <span class="mn-drawer-title">会话</span>
+        <button type="button" class="mn-icon" id="mn-new" title="新建会话" aria-label="新建会话">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+        </button>
+        <button type="button" class="mn-icon" id="mn-full" title="全屏 / 退出全屏" aria-label="全屏">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/></svg>
+        </button>
+      </div>
+      <ul class="mn-list" id="mn-list"></ul>
+    </aside>
+    <div class="mn-backdrop" id="mn-backdrop" hidden></div>
+
+    <!-- 主区：空闲提示 / 流式解题过程（思考·工具·正文） -->
+    <main class="mn-main" id="mn-main">
+      <div class="mn-flags" id="mn-flags" hidden></div>
+      <div class="mn-todo" id="mn-todo" hidden></div>
+      <div class="mn-hint" id="mn-hint">
+        <span>输入题目或添加附件</span>
+        <span class="mn-hint-sub">Enter 发送 · Shift+Enter 换行</span>
+      </div>
+      <div class="mn-stream" id="mn-stream" hidden>
+        <div class="mn-stream-inner" id="mn-stream-inner"></div>
+      </div>
+    </main>
+    <button type="button" class="mn-scroll-bottom" id="mn-scroll-bottom" hidden title="回到底部" aria-label="回到底部">↓</button>
+    <div class="mn-notices" id="mn-notices"></div>
+
+    <!-- 底部：附件按钮 + 输入框 + 发送按钮 -->
+    <footer class="mn-bar">
+      <div class="mn-chips" id="mn-chips" hidden></div>
+      <div class="mn-running" id="mn-working" hidden>
+        <span class="mn-spin" aria-hidden="true"></span>
+        <span>正在解题中</span>
+        <span class="mn-running-progress" id="mn-progress" hidden></span>
+      </div>
+      <div class="mn-row">
+        <button type="button" class="mn-icon" id="mn-attach" title="添加附件" aria-label="添加附件">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        </button>
+        <input type="file" id="mn-file" multiple hidden>
+        <textarea id="mn-input" rows="1" spellcheck="false"
+          placeholder="输入题目或粘贴内容…"></textarea>
+        <button type="button" class="mn-send" id="mn-send">发送</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ===================== 面 B：CTF 编码 / 解码工具箱（伪装面） ===================== -->
+  <div class="cd-face" id="face-codec">
+    <header class="cd-title">
+      <span class="cd-logo" aria-hidden="true">⌘</span>
+      <span class="cd-name">CTF Codec Toolbox</span>
+      <span class="cd-ver">v1.4.2</span>
+      <span class="cd-spacer"></span>
+      <button type="button" class="cd-tbtn" id="cd-full" title="全屏 / 退出全屏" aria-label="全屏">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/></svg>
+      </button>
+      <button type="button" class="cd-tbtn" id="cd-close" title="关闭" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </header>
+
+    <nav class="cd-algos">
+      <div class="cd-tabs" id="cd-tabs"></div>
+      <div class="cd-param" id="cd-param" hidden>
+        <label>位移 <input type="number" id="cd-shift" value="3" min="-25" max="25" step="1"></label>
+      </div>
+    </nav>
+
+    <div class="cd-body">
+      <div class="cd-label">
+        <span>输入</span>
+        <span class="cd-count" id="cd-in-count">0 字符</span>
+      </div>
+      <textarea class="cd-io" id="cd-in" spellcheck="false" placeholder="在此粘贴待处理的文本…"></textarea>
+
+      <div class="cd-actions">
+        <button type="button" class="cd-btn primary" id="cd-enc">编码</button>
+        <button type="button" class="cd-btn" id="cd-dec">解码</button>
+        <button type="button" class="cd-btn" id="cd-swap" title="输入与输出互换">⇅ 交换</button>
+        <button type="button" class="cd-btn" id="cd-clear">清空</button>
+        <button type="button" class="cd-btn" id="cd-copy">复制结果</button>
+      </div>
+
+      <div class="cd-label">
+        <span>输出</span>
+        <span class="cd-count" id="cd-out-count">0 字符</span>
+      </div>
+      <textarea class="cd-io" id="cd-out" spellcheck="false" readonly placeholder="处理结果…"></textarea>
+    </div>
+
+    <footer class="cd-status">
+      <span class="cd-dot" aria-hidden="true"></span>
+      <span id="cd-status" data-tone="idle">就绪</span>
+      <span class="cd-spacer"></span>
+      <span class="cd-note">本地处理 · 不上传任何数据</span>
+    </footer>
+  </div>
+</div>
+
+<script src="js/markdown.js"></script>
+<script src="js/api.js"></script>
+<script src="js/timeline.js"></script>
+<script src="js/codec.js"></script>
+<script src="js/min.js"></script>
+</body>
+</html>

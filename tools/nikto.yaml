@@ -1,0 +1,45 @@
+name: "nikto"
+command: "nikto"
+args: ["-nointeractive"]
+enabled: true
+short_description: "Web 服务器扫描：host + 可选 port/ssl/Tuning 调优"
+description: |
+  默认行为：对目标 Web 服务做综合漏洞与配置扫描（危险文件、过时组件、默认页面等），
+  -nointeractive 禁止交互式更新提示，避免卡住等待输入。
+  参数：host 为目标主机（-h，必填，可为域名/IP，也可写 host:port）；
+  port 指定端口（-p）；ssl 为 true 时启用 HTTPS（-ssl）；
+  tuning 为扫描调优项（-Tuning，如 123b 只跑特定类别，加快速度、减少噪音）；
+  additional_args 追加原始参数（如 -maxtime 120s 限时、-C all 检查 CGI）。
+  常见坑：不加 -Tuning 会跑很久，务必配合执行超时；默认会输出大量信息，
+  结果需人工筛；对真实站点扫描属未授权行为，仅限题目靶场。
+  示例：nikto -nointeractive -h http://10.0.0.5 -p 8080
+        nikto -nointeractive -h 10.0.0.5 -ssl -Tuning 123b
+parameters:
+  - name: "host"
+    type: "string"
+    description: "目标主机，如 10.0.0.5 或 http://10.0.0.5"
+    flag: "-h"
+    required: true
+  - name: "port"
+    type: "string"
+    description: "目标端口，如 80 或 8080"
+    flag: "-p"
+    required: false
+  - name: "ssl"
+    type: "boolean"
+    description: "为 true 时按 HTTPS 扫描（-ssl）"
+    flag: "-ssl"
+    required: false
+  - name: "tuning"
+    type: "string"
+    description: "扫描调优项，如 123b、x（跳过参数猜测）"
+    flag: "-Tuning"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -maxtime 120s -C all"
+    format: "positional"
+    required: false
+category: "web"
+requires_root: false
+interactive: false

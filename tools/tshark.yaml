@@ -1,0 +1,37 @@
+name: "tshark"
+command: "tshark"
+args: []
+enabled: true
+short_description: "PCAP 分析：pcap(-r) + 显示过滤/字段提取"
+description: |
+  默认行为：以命令行方式读取并分析抓包文件（-r），非交互运行，适合流量分析题。
+  参数：pcap 为待分析的 pcap/pcapng 文件（-r，必填）；
+  display_filter 为 Wireshark 显示过滤表达式（-Y，如 "http.request"、
+  "dns.qry.name contains flag"、"tcp.port==80"）；
+  additional_args 追加原始参数，如 "-T fields -e http.host -e http.request.uri"
+  提取字段、"-z follow,tcp,ascii,0" 跟踪流、"-q -z io,phs" 协议统计。
+  常见坑：tshark 默认输出逐包摘要，需用 -T fields/-z 才能得到有用结果；
+  实时抓包（-i 网卡）需要 root，本配方针对离线 -r 文件分析；
+  过滤表达式写错会静默返回空，可先用 -Y 简单表达式验证。
+  示例：tshark -r {{WORKSPACE}}/capture.pcap -Y "http.request" -T fields -e http.host -e http.request.uri
+        tshark -r {{WORKSPACE}}/capture.pcap -Y "tcp.stream==0" -z follow,tcp,ascii,0 -q
+parameters:
+  - name: "pcap"
+    type: "string"
+    description: "待分析的 pcap/pcapng 文件路径（-r）"
+    flag: "-r"
+    required: true
+  - name: "display_filter"
+    type: "string"
+    description: "Wireshark 显示过滤表达式（-Y）"
+    flag: "-Y"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 \"-T fields -e http.host\""
+    format: "positional"
+    required: false
+category: "forensics"
+requires_root: false
+interactive: false
+notes: "离线读取 pcap 不需要 root；实时抓包（-i）才需要 root 权限"

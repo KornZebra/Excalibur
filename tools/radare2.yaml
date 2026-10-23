@@ -1,0 +1,42 @@
+name: "radare2"
+command: "r2"
+args: ["-q"]
+enabled: true
+short_description: "逆向框架：binary + -c 批处理命令，禁止进入交互"
+description: |
+  默认行为：以安静模式（-q）启动 radare2，并应始终通过 -c 传入命令后自动退出，
+  例如 `r2 -q -c "aaa; pdf @ main" ./chall`。绝不能不带 -c 直接运行，
+  否则会停在 radare2 交互提示符等待输入并导致执行超时。
+  参数：binary 为待分析文件（必填）；commands 为分号分隔的 r2 命令（-c，
+  如 "aaa"、s main、pdf、izz、axt @ sym.imp.system、V 等）；
+  write 为 true 时以可写模式打开（-w，用于打补丁，谨慎）；
+  additional_args 追加原始参数（如 -A 启动即分析、-e scr.color=0 关闭彩色）。
+  常见坑：多条命令用分号连接，或用 multiple -c 也可；分析大程序 aaa 较慢；
+  若装了 r2ghidra 可用 pdg 输出反编译伪代码。
+  示例：r2 -q -c "aaa; pdf @ main" ./chall
+        r2 -q -c "aaa; izz" ./chall
+parameters:
+  - name: "binary"
+    type: "string"
+    description: "待分析的二进制文件路径"
+    required: true
+    position: 1
+  - name: "commands"
+    type: "string"
+    description: "分号分隔的 r2 命令，如 \"aaa; pdf @ main\""
+    flag: "-c"
+    required: false
+  - name: "write"
+    type: "boolean"
+    description: "为 true 时以可写模式打开（-w），可能修改文件"
+    flag: "-w"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -A -e scr.color=0"
+    format: "positional"
+    required: false
+category: "reverse"
+requires_root: false
+interactive: false
+notes: "必须用 -c 批处理；不带 -c 会进入交互界面并挂死"

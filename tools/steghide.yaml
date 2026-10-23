@@ -1,0 +1,42 @@
+name: "steghide"
+command: "steghide"
+args: ["extract", "-f"]
+enabled: true
+short_description: "JPEG/BMP/WAV 提取隐写：stego_file + 口令"
+description: |
+  默认行为：从图片/音频中提取（extract）隐藏数据，-f 强制覆盖同名输出文件，
+  避免因目标已存在而询问确认导致挂死。
+  参数：stego_file 为含隐写的载体文件（-sf，必填）；
+  passphrase 为口令（-p，留空则尝试空口令；口令错误不会提示而是报
+  "could not extract"，需爆破时用 stegseek）；
+  output 指定提取出的文件路径（-xf，建议放 {{WORKSPACE}}）；
+  additional_args 追加原始参数（如 -v 详细输出、-e 查看嵌入信息用 info 子命令）。
+  常见坑：steghide 不支持 PNG，仅支持 JPEG/BMP/WAV/AU；
+  没有口令时优先试空口令与题目提示的弱口令；用 additional_args 传
+  "info -sf file" 可查看是否嵌入了数据（注意需覆盖默认 extract）。
+  示例：steghide extract -f -sf {{WORKSPACE}}/cover.jpg -p "" -xf {{WORKSPACE}}/out.txt
+        steghide extract -f -sf cover.jpg -p secret
+parameters:
+  - name: "stego_file"
+    type: "string"
+    description: "含隐写的载体文件（-sf），支持 JPEG/BMP/WAV"
+    flag: "-sf"
+    required: true
+  - name: "passphrase"
+    type: "string"
+    description: "提取口令（-p），留空则尝试空口令"
+    flag: "-p"
+    required: false
+  - name: "output"
+    type: "string"
+    description: "提取文件的输出路径（-xf）"
+    flag: "-xf"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -v"
+    format: "positional"
+    required: false
+category: "forensics"
+requires_root: false
+interactive: false

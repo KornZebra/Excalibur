@@ -1,0 +1,44 @@
+name: "dns_enum"
+command: "dnsrecon"
+args: []
+enabled: true
+short_description: "DNS 枚举：域名 + 记录类型/字典/NS，支持 zonewalk"
+description: |
+  默认行为：使用 dnsrecon 对题目域名的 DNS 记录做枚举，默认标准查询（std）。
+  参数：domain 为待枚举域名（-d，必填）；type 为枚举类型（-t，
+  std 标准记录 / axfr 域传送 / brt 字典爆破 / zonewalk NSEC 遍历，默认 std）；
+  wordlist 为爆破字典（-D，配合 -t brt）；nameserver 指定 DNS 服务器（-n）；
+  additional_args 追加原始参数。
+  常见坑：本机未安装 dnsrecon 时会标记 unavailable，可改用 dig/host/nslookup；
+  域传送（axfr）仅对配置错误的授权靶机有效；字典爆破较慢注意超时。
+  示例：dnsrecon -d flag.ctf -t std -n 10.0.0.5
+        dnsrecon -d flag.ctf -t brt -D /usr/share/wordlists/dnsmap.txt
+parameters:
+  - name: "domain"
+    type: "string"
+    description: "待枚举的域名（仅限题目环境），如 flag.ctf"
+    flag: "-d"
+    required: true
+  - name: "type"
+    type: "string"
+    description: "枚举类型 std/axfr/brt/zonewalk"
+    flag: "-t"
+    required: false
+    default: "std"
+  - name: "wordlist"
+    type: "string"
+    description: "字典文件路径，配合 type=brt"
+    flag: "-D"
+    required: false
+  - name: "nameserver"
+    type: "string"
+    description: "指定 DNS 服务器 IP"
+    flag: "-n"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数"
+    format: "positional"
+    required: false
+category: "recon"
+requires_root: false

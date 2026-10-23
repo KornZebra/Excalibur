@@ -1,0 +1,30 @@
+name: "sage_run"
+command: "sage"
+args: ["-python", "{{ROOT}}/tools/scripts/sage_runner.py"]
+enabled: true
+short_description: "运行 SageMath 脚本：script.sage，带超时保护"
+description: |
+  默认行为：通过项目自研包装器 {{ROOT}}/tools/scripts/sage_runner.py 运行 SageMath
+  脚本（`sage -python sage_runner.py <script.sage>`），带超时保护；若本机无 sage
+  则由包装器回退到 python3。
+  参数：script 为待运行的 .sage 脚本路径（必填，放最后，如
+  {{WORKSPACE}}/solve.sage）；additional_args 追加传给脚本的参数。
+  常见坑：Sage 启动较慢（首次加载数十秒），注意执行超时设置；
+  脚本里务必把结果 print 出来，不要只赋值；RSA/椭圆曲线/格攻击类题目
+  （如小指数、共模、Wiener、LLL）优先用 Sage 而非纯 Python。
+  示例：sage -python {{ROOT}}/tools/scripts/sage_runner.py {{WORKSPACE}}/solve.sage
+        sage -python {{ROOT}}/tools/scripts/sage_runner.py {{WORKSPACE}}/rsa.sage
+parameters:
+  - name: "script"
+    type: "string"
+    description: "SageMath 脚本路径，如 {{WORKSPACE}}/solve.sage"
+    required: true
+    format: "positional"
+  - name: "additional_args"
+    type: "string"
+    description: "追加传给目标脚本的参数"
+    format: "positional"
+    required: false
+category: "crypto"
+requires_root: false
+interactive: false

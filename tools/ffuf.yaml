@@ -1,0 +1,44 @@
+name: "ffuf"
+command: "ffuf"
+args: ["-noninteractive", "-c"]
+enabled: true
+short_description: "高速 fuzz：url(含FUZZ) + 字典/方法/状态过滤"
+description: |
+  默认行为：以非交互模式运行 fuzz（-noninteractive 禁用交互控制台，避免等待按键挂死），
+  -c 保留彩色输出便于阅读。参数：url 为含 FUZZ 占位符的地址（-u，必填），
+  如 http://10.0.0.5/FUZZ；wordlist 为字典（-w，必填项建议总是指定）；
+  method 指定方法（-X）；match_codes 匹配状态码（-mc，如 200,301,302,403）；
+  additional_args 追加原始参数（如 -fs 1234 过滤固定响应长度、-H "Host: x"）。
+  常见坑：不加 -w 会报错；字典过大时输出爆炸，务必用 -mc/-fs/-fc 过滤；
+  使用时序或 -rate 限速可避免打挂靶机；结果仅用于授权题目环境。
+  示例：ffuf -noninteractive -u http://10.0.0.5/FUZZ -w /usr/share/wordlists/dirb/common.txt -mc 200,301,302,403
+        ffuf -noninteractive -u http://10.0.0.5/index.php?page=FUZZ -w lfi.txt -fs 1024
+parameters:
+  - name: "url"
+    type: "string"
+    description: "含 FUZZ 占位符的 URL，如 http://10.0.0.5/FUZZ"
+    flag: "-u"
+    required: true
+  - name: "wordlist"
+    type: "string"
+    description: "字典文件路径"
+    flag: "-w"
+    required: false
+  - name: "method"
+    type: "string"
+    description: "请求方法 GET/POST 等"
+    flag: "-X"
+    required: false
+  - name: "match_codes"
+    type: "string"
+    description: "匹配的状态码，如 200,301,302,403"
+    flag: "-mc"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -fs 1234 -rate 50"
+    format: "positional"
+    required: false
+category: "recon"
+requires_root: false
+interactive: false

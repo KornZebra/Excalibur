@@ -1,0 +1,40 @@
+name: "upx"
+command: "upx"
+args: ["-d"]
+enabled: true
+short_description: "UPX 脱壳：file 默认解压（-d），可指定输出"
+description: |
+  默认行为：对 UPX 加壳的二进制执行解压（-d），这是 Reverse/Pwn 题常见的第一步。
+  参数：file 为待脱壳文件（必填）；output 指定输出文件（-o，避免覆盖原始样本，
+  强烈建议指定到工作区）；keep_backup 为 true 时保留备份（-k）；
+  additional_args 追加原始参数（如 --force 强制处理、-l 仅列出壳信息）。
+  常见坑：upx -d 默认会就地覆盖原文件，操作前先复制样本到工作区，避免破坏附件；
+  非 UPX 壳（如自定义壳或压缩段）会报 "not packed by UPX"，需改用 binwalk/手动解密；
+  脱壳后务必重新用 checksec/strings 分析，入口代码会变化。
+  示例：upx -d -o {{WORKSPACE}}/chall.unpacked ./chall
+        upx -l ./chall
+parameters:
+  - name: "file"
+    type: "string"
+    description: "待脱壳的 UPX 文件路径"
+    required: true
+    position: 1
+  - name: "output"
+    type: "string"
+    description: "输出文件路径，建议放 {{WORKSPACE}} 以免覆盖原样本"
+    flag: "-o"
+    required: false
+  - name: "keep_backup"
+    type: "boolean"
+    description: "为 true 时保留原文件备份（-k）"
+    flag: "-k"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --force -l"
+    format: "positional"
+    required: false
+category: "reverse"
+requires_root: false
+dangerous: false
+notes: "默认就地覆盖原文件，建议显式指定 -o 到工作区"

@@ -1,0 +1,40 @@
+name: "zsteg"
+command: "zsteg"
+args: []
+enabled: true
+short_description: "PNG/BMP 隐写检测：file + 可选全模式/提取"
+description: |
+  默认行为：扫描 PNG/BMP 图片中各种 LSB 位平面与位序组合，寻找隐藏文本或数据，
+  是图片隐写题的常用工具。
+  参数：file 为待分析图片（必填）；all 为 true 时尝试所有已知组合（-a，
+  更全但更慢）；extract 为 true 时提取找到的数据（-E，如 -E "b1,rgb,lsb,xy"
+  配合 additional_args 指定确切通道）；additional_args 追加原始参数
+  （如 -b 1、-o xy、-l 0x1000、-v 等精细控制）。
+  常见坑：zsteg 是 Ruby 脚本，未安装时会标记 unavailable，可用 python 的
+  PIL/StegSolve 替代；-a 输出很长，注意提取关键行；检测到内容后需手动确认
+  是 flag 还是压缩包/PNG 片段。
+  示例：zsteg ./stego.png
+        zsteg -a ./stego.png
+parameters:
+  - name: "file"
+    type: "string"
+    description: "待分析的 PNG/BMP 图片路径"
+    required: true
+    position: 1
+  - name: "all"
+    type: "boolean"
+    description: "为 true 时尝试所有组合（-a）"
+    flag: "-a"
+    required: false
+  - name: "extract"
+    type: "boolean"
+    description: "为 true 时提取数据（-E）"
+    flag: "-E"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -b 1 -o xy"
+    format: "positional"
+    required: false
+category: "forensics"
+requires_root: false

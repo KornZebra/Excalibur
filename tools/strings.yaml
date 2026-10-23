@@ -1,0 +1,34 @@
+name: "strings"
+command: "strings"
+args: ["-a", "-n", "6"]
+enabled: true
+short_description: "提取可打印字符串：file + 可选编码/最小长度"
+description: |
+  默认行为：扫描整个文件（-a 不跳过数据段）并提取长度 ≥6 的可打印字符串
+  （-n 6），常用于从二进制、内存镜像、图片中快速找 flag、URL、路径、密钥。
+  参数：file 为待扫描文件（必填）；encoding 指定字符宽度/编码（-e，
+  如 l 16 位小端、b 大端、S 8 位、L 32 位小端，处理宽字符或 Unicode 时必用）；
+  additional_args 追加原始参数（如 -t x 显示偏移、-d 只扫数据段）。
+  常见坑：默认只扫可加载段，压缩/加密内容无效，需先 upx -d 或 binwalk -e；
+  找 flag 时可直接管道 grep（在 additional_args 里无法接管道，可改用 bash）；
+  宽字符（UTF-16）flag 必须用 -el 才能提取。
+  示例：strings -a -n 6 ./chall
+        strings -a -e l -n 4 ./chall | grep -i flag
+parameters:
+  - name: "file"
+    type: "string"
+    description: "待扫描的文件路径，如 ./chall 或 memory.raw"
+    required: true
+    position: 1
+  - name: "encoding"
+    type: "string"
+    description: "字符编码/宽度，如 l、b、S、L"
+    flag: "-e"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -t x"
+    format: "positional"
+    required: false
+category: "reverse"
+requires_root: false

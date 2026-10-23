@@ -1,0 +1,441 @@
+{
+  "exportedAt": "2026-10-23",
+  "count": 28,
+  "challenges": [
+    {
+      "id": "chal_ab6ce038f239414db719",
+      "name": "menu heap",
+      "category": "pwn",
+      "description": "is a menu heap！？目标是本地getshell读取根目录下的flag",
+      "points": 0,
+      "attachments": [
+        "<workspace>/conversations/conv_be8e2e95e41c49f68e44/attachments/menu.zip"
+      ],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "",
+      "created_at": 1791253616.0464525,
+      "updated_at": 1791253616.0464525,
+      "meta": {}
+    },
+    {
+      "id": "chal_e2a5146ad16942e68ced",
+      "name": "blindrop",
+      "category": "pwn",
+      "description": "二进制题目，目标为获取本地 shell",
+      "points": 0,
+      "attachments": [
+        "<workspace>/conversations/conv_d442450e753a478090b0/attachments/blindrop.zip"
+      ],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1791261843.6693263,
+      "updated_at": 1791261843.6693263,
+      "meta": {}
+    },
+    {
+      "id": "chal_b1f874e7b1234ca3b8cb",
+      "name": "blindrop",
+      "category": "pwn",
+      "description": "",
+      "points": 0,
+      "attachments": [
+        "<workspace>/conversations/conv_58f3a792217b48899084/attachments/blindrop.zip"
+      ],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1791264375.537857,
+      "updated_at": 1791264375.537857,
+      "meta": {}
+    },
+    {
+      "id": "chal_7cf95157ca374f668023",
+      "name": "login-web",
+      "category": "web",
+      "description": "",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "http://160.202.254.160:15812/login.php",
+      "created_at": 1791292783.2993722,
+      "updated_at": 1792420582.7989674,
+      "meta": {
+        "projectId": "proj_4811206ca23342da8247"
+      }
+    },
+    {
+      "id": "chal_bd0e06da196a4f94a474",
+      "name": "全都过滤了绝望吗",
+      "category": "web",
+      "description": "",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "http://160.202.254.160:16645/",
+      "created_at": 1791293100.7469327,
+      "updated_at": 1792420582.7991292,
+      "meta": {
+        "projectId": "proj_4811206ca23342da8247"
+      }
+    },
+    {
+      "id": "chal_12dd9f8a6f64435092f2",
+      "name": "web-challenge-15659",
+      "category": "web",
+      "description": "",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "http://160.202.254.160:15659",
+      "created_at": 1791369562.5423658,
+      "updated_at": 1792420582.7991796,
+      "meta": {
+        "projectId": "proj_4811206ca23342da8247"
+      }
+    },
+    {
+      "id": "chal_bc80170afd4b4f96bfee",
+      "name": "CTF新闻系统",
+      "category": "web",
+      "description": "",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "http://160.202.254.160:13860",
+      "created_at": 1791878099.5335248,
+      "updated_at": 1792420582.7992268,
+      "meta": {
+        "projectId": "proj_4811206ca23342da8247"
+      }
+    },
+    {
+      "id": "chal_6ede6658ca4a4c989331",
+      "name": "web-login-13339",
+      "category": "web",
+      "description": "",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "http://160.202.254.160:13339",
+      "created_at": 1791878586.2387333,
+      "updated_at": 1791878586.2387333,
+      "meta": {}
+    },
+    {
+      "id": "chal_9bc83a9836ac461083ff",
+      "name": "nssctf-web-24704",
+      "category": "web",
+      "description": "",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "http://node5.anna.nssctf.cn:24704",
+      "created_at": 1791895072.3684385,
+      "updated_at": 1791895072.3684385,
+      "meta": {}
+    },
+    {
+      "id": "chal_7b213486e952453ca5ed",
+      "name": "crypto-5 遥测链路 AES-GCM",
+      "category": "crypto",
+      "description": "某遥测上行链路以 VHF 数传为主用通道、光纤为备用通道，遥测网关（型号 NRWF-TELEM-GW，固件 3.8.2）负责把温度、油位、开关量等遥测数据封装成定长帧后发往远端。链路的机密性与完整性由 AES-128-GCM 提供。运维班组发现网关的上行帧计数器存在异常跳变，从网关调试口镜像出一段上行帧日志，连同网关的链路台账与许可封存文件一并交给你。分析附件，恢复出当前有效的许可凭据，提交形如 flag{...} 的字符串。",
+      "points": 0,
+      "attachments": [
+        "<workspace>/challenge/_default/crypto5/gcm_capture.json",
+        "<workspace>/challenge/_default/crypto5/sealed_license.json",
+        "<workspace>/challenge/_default/crypto5/telemetry_policy.json"
+      ],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "",
+      "created_at": 1792199769.9763901,
+      "updated_at": 1792420582.7992756,
+      "meta": {
+        "projectId": "proj_e867990c6eb54071a91a"
+      }
+    },
+    {
+      "id": "chal_d4d325d16ee64dd1adb9",
+      "name": "misc-1 D5000 EMS 配置文件乱码密码还原",
+      "category": "misc",
+      "description": "工业互联网安全大赛杂项题。附件 zip 内含 db_config.sys（D5000 EMS 数据库配置，user_password 字段为乱码）与 encode.png（实为 JPEG，IDA 反编译伪代码截图）。需还原乱码密码并从图片提取信息拼出 flag。",
+      "points": 0,
+      "attachments": [
+        "<path>"
+      ],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "",
+      "created_at": 1792202952.585423,
+      "updated_at": 1792202952.585423,
+      "meta": {}
+    },
+    {
+      "id": "chal_979927ad35af4b4e8f74",
+      "name": "任务9",
+      "category": "misc",
+      "description": "根据给你的附件，完成这道ctf杂项题目，给我flag并在桌面文件夹中生成一份md格式的详细wp",
+      "points": 0,
+      "attachments": [
+        "<workspace>/challenge/chal_979927ad35af4b4e8f74/misc-4.zip"
+      ],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1792203866.708774,
+      "updated_at": 1792203866.7494764,
+      "meta": {
+        "source": "manual",
+        "prompt": ""
+      }
+    },
+    {
+      "id": "chal_e4307d241701431eb8ea",
+      "name": "pwn-2 plc_rcp 配方帧缓存",
+      "category": "pwn",
+      "description": "某网关通过 plc_rcp 把上位机下发的配方帧（定长 32 字节）缓存在一块静态堆里，供现场逻辑周期性渲染。堆管理器是厂商自研的：bump 分配 + 单向空闲链表，据称\"比 libc 更轻、更适合嵌入式\"。现场只开放了两个渲染后端（render / export）。审计人员在一台退役样机上发现：缓存管理器对已经释放的帧缓冲仍然留着可写的槽位指针，而且空闲链表就写在用户数据区里 —— 没有任何加固。请你构造一段维护脚本，把保留后端接上来，取得 recipe_policy.json 中 status=valid 的那一类凭据。",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "本地附件题：./plc_rcp < script.txt（静态非PIE ELF）",
+      "created_at": 1792220650.0705137,
+      "updated_at": 1792420582.7993255,
+      "meta": {
+        "projectId": "proj_e867990c6eb54071a91a"
+      }
+    },
+    {
+      "id": "chal_de6f267a173e4984be75",
+      "name": "misc-1 D5000 EMS 配置文件乱码密码还原",
+      "category": "misc",
+      "description": "某电力 D5000 EMS 系统的数据库配置文件 db_config.sys 中 user_password 字段显示为一串乱码汉字（镬镱镬镫獒桕桠桁獒桧腱腌腩腙），附件另含 encode.png（实为 JPEG，内容为 IDA 反编译的 Encode 函数伪代码）。要求还原原始口令，提交形如 flag{...} 的字符串。",
+      "points": 0,
+      "attachments": [
+        "<workspace>/challenge/_default/misc1/misc-1.zip"
+      ],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "纯附件题（misc1/misc-1.zip：db_config.sys + encode.png）",
+      "created_at": 1792224095.4032824,
+      "updated_at": 1792224095.4032824,
+      "meta": {}
+    },
+    {
+      "id": "chal_c9f3a57aba4046c7ae7e",
+      "name": "secretkey 解密",
+      "category": "crypto",
+      "description": "已知密文 tRYrA5YTRCJGL7MCBGN4N9IjMFRayJdUPyI5，密钥与 secretkey 相关，解密得到明文，最终 flag{明文}。纯密文题，无靶机。",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "纯附件题（无靶机）",
+      "created_at": 1792224850.8460925,
+      "updated_at": 1792224850.8460925,
+      "meta": {}
+    },
+    {
+      "id": "chal_63c3e247d82b4397b7b0",
+      "name": "web file_get_contents（16075）",
+      "category": "web",
+      "description": "目标 http://160.202.254.160:16075 。一道 web 题，题面提示与 file_get_contents 相关，疑似文件读取/伪协议利用。要求找到 flag 并生成可复现 writeup。",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{.*\\}",
+      "target": "http://160.202.254.160:16075",
+      "created_at": 1792464501.2590253,
+      "updated_at": 1792464579.7544947,
+      "meta": {
+        "source": "manual",
+        "prompt": "优先确认 file_get_contents 的输入点与可用伪协议（php://filter、data:// 等）",
+        "target_authorized": true
+      }
+    },
+    {
+      "id": "chal_91c0ccfeef7b4a86b47d",
+      "name": "file_get_contents 伪协议利用（web）",
+      "category": "web",
+      "description": "题面提示与 PHP file_get_contents 相关，疑似文件读取/伪协议利用。目标：http://160.202.254.160:16075",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{[^}]+\\}",
+      "target": "http://160.202.254.160:16075",
+      "created_at": 1792464587.6221476,
+      "updated_at": 1792464587.6221476,
+      "meta": {}
+    },
+    {
+      "id": "chal_98d72a557dec42c2bc72",
+      "name": "web file_get_contents（16075）控制台复跑",
+      "category": "web",
+      "description": "目标 http://160.202.254.160:16075 。web 题，题面提示 file_get_contents，疑似文件读取/伪协议利用。请找到 flag 并生成可复现 writeup。",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "flag\\{.*\\}",
+      "target": "http://160.202.254.160:16075",
+      "created_at": 1792465416.269542,
+      "updated_at": 1792465416.269542,
+      "meta": {
+        "source": "manual",
+        "target_authorized": true,
+        "prompt": "优先确认 file_get_contents 的输入点与可用伪协议（php://filter、data:// 等）"
+      }
+    },
+    {
+      "id": "chal_ec7ff4538e374c8c91b8",
+      "name": "Reverse 附件题",
+      "category": "reverse",
+      "description": "得到的flag请使用NSSCTF{}格式提交。附件：附件（约1.98MB）。",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "NSSCTF\\{[^}]+\\}",
+      "target": "https://files.nssctf.cn/c0c28f3ff88a479cb4e79192d67db442",
+      "created_at": 1792585762.4375167,
+      "updated_at": 1792585762.4375167,
+      "meta": {}
+    },
+    {
+      "id": "chal_b277db03bf184b878a86",
+      "name": "[11238] Pwn",
+      "category": "Pwn",
+      "description": "竞赛题目 11238（Pwn）\n\n附件下载：https://files.nssctf.cn/b12a8eb66a1b4d69af998e9412509adc?response-content-disposition=attachment;filename=pwn\n\n目标地址：node4.anna.nssctf.cn:25101",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "",
+      "target": "node4.anna.nssctf.cn:25101",
+      "created_at": 1792591221.804875,
+      "updated_at": 1792591221.804875,
+      "meta": {
+        "source": "competition",
+        "competitionId": "comp_71256b21d2734f979f8f",
+        "exerciseKey": "11238"
+      }
+    },
+    {
+      "id": "chal_15289c0eb29849678755",
+      "name": "[11240] Misc",
+      "category": "Misc",
+      "description": "竞赛题目 11240（Misc）\n\n昨天，单位流量系统捕获了黑客攻击流量，请您分析流量后进行回答：\n黑客在服务器上编译的恶意so文件，文件名是_____________。(请提交带有文件后缀的文件名，例如x.so)。得到的flag请使用NSSCTF{}格式提交。\n\n附件下载：https://files.nssctf.cn/0f6405a92fea4106beea853c62fa6923?response-content-disposition=attachment;filename=jwt.zip",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1792593896.3038328,
+      "updated_at": 1792593896.3038328,
+      "meta": {
+        "source": "competition",
+        "competitionId": "comp_71256b21d2734f979f8f",
+        "exerciseKey": "11240"
+      }
+    },
+    {
+      "id": "chal_90431e8661d44f31b8c1",
+      "name": "[11244] Reverse（这也是程序？）",
+      "category": "reverse",
+      "description": "竞赛题目 11244（Reverse）。题面：这也是程序？得到的flag请使用NSSCTF{}格式提交。附件下载：https://files.nssctf.cn/c52500fc91d34f0bbb84953f03c20ae5?response-content-disposition=attachment;filename=%E9%99%84%E4%BB%B6.json",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "NSSCTF\\{[^}]+\\}",
+      "target": "",
+      "created_at": 1792598289.2778728,
+      "updated_at": 1792598362.222029,
+      "meta": {}
+    },
+    {
+      "id": "chal_ffc0f7b51fd74bb7943b",
+      "name": "[11263] Crypto",
+      "category": "Crypto",
+      "description": "竞赛题目 11263（Crypto）\n\n得到的flag使用NSSCTF{}格式提交。\n\n附件下载：https://files.nssctf.cn/74611c103d6b447588d9d25a70047d91?response-content-disposition=attachment;filename=gcd_e7461e2432de4b692b6f7437f464e091.zip",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1792634660.9836457,
+      "updated_at": 1792634660.9836457,
+      "meta": {
+        "source": "competition",
+        "competitionId": "comp_71256b21d2734f979f8f",
+        "exerciseKey": "11263"
+      }
+    },
+    {
+      "id": "chal_f377bf18650a49cab90a",
+      "name": "[11268] Web",
+      "category": "Web",
+      "description": "竞赛题目 11268（Web）\n\n没有回显如何读flag呢",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1792638263.8902626,
+      "updated_at": 1792638263.8902626,
+      "meta": {
+        "source": "competition",
+        "competitionId": "comp_71256b21d2734f979f8f",
+        "exerciseKey": "11268"
+      }
+    },
+    {
+      "id": "chal_8547852ebc22466a88f8",
+      "name": "[11274] Crypto",
+      "category": "Crypto",
+      "description": "竞赛题目 11274（Crypto）\n\n来做做数学题吧！\n得到的flag请使用NSSCTF{}格式提交。\n\n附件下载：https://files.nssctf.cn/c54b058a0f7c431e962069da11ad75a5?response-content-disposition=attachment;filename=easyrsa.zip",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1792641866.4377997,
+      "updated_at": 1792641866.4377997,
+      "meta": {
+        "source": "competition",
+        "competitionId": "comp_71256b21d2734f979f8f",
+        "exerciseKey": "11274"
+      }
+    },
+    {
+      "id": "chal_e1b965b27f35456690b5",
+      "name": "[11276] Crypto",
+      "category": "Crypto",
+      "description": "竞赛题目 11276（Crypto）\n\nAttack simple RSA\n该题目复现环境尚未取得主办方及出题人相关授权，如果侵权，请联系管理员删除。得到的flag请使用NSSCTF{}格式提交。\n\n附件下载：https://files.nssctf.cn/893a7da4de844e6ba058dd73d4633183?response-content-disposition=attachment;filename=signin.zip",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1792645468.518862,
+      "updated_at": 1792645468.518862,
+      "meta": {
+        "source": "competition",
+        "competitionId": "comp_71256b21d2734f979f8f",
+        "exerciseKey": "11276"
+      }
+    },
+    {
+      "id": "chal_3cdc2e17ca3d434db8c1",
+      "name": "[11280] Pwn",
+      "category": "Pwn",
+      "description": "竞赛题目 11280（Pwn）\n\nUbuntu 16\n\n附件下载：https://files.nssctf.cn/ca2d3aa9713b4d748143fe3064c6d5c6?response-content-disposition=attachment;filename=pwn",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1792649077.2418582,
+      "updated_at": 1792649077.2418582,
+      "meta": {
+        "source": "competition",
+        "competitionId": "comp_71256b21d2734f979f8f",
+        "exerciseKey": "11280"
+      }
+    },
+    {
+      "id": "chal_2183c61ecb4b43d0a1be",
+      "name": "[11285] Misc",
+      "category": "Misc",
+      "description": "竞赛题目 11285（Misc）\n\n得到的flag请使用NSSCTF{}格式提交。\n\n附件下载：https://files.nssctf.cn/bc31f88470d84f70aa876abcc4a04c7e?response-content-disposition=attachment;filename=%E8%97%8F%E8%97%8F%E8%97%8F.rar",
+      "points": 0,
+      "attachments": [],
+      "flag_pattern": "",
+      "target": "",
+      "created_at": 1792652679.8839667,
+      "updated_at": 1792652679.8839667,
+      "meta": {
+        "source": "competition",
+        "competitionId": "comp_71256b21d2734f979f8f",
+        "exerciseKey": "11285"
+      }
+    }
+  ]
+}

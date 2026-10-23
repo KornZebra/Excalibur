@@ -1,0 +1,63 @@
+name: "sqlmap"
+command: "sqlmap"
+args: ["--batch", "--random-agent"]
+enabled: true
+short_description: "SQL 注入检测：url + data/cookie/dbms"
+description: |
+  默认行为：对目标 URL 做自动化 SQL 注入检测与利用。必须以 --batch 运行
+  （本配方已内置），否则会在每个交互问题处等待输入而挂死；--random-agent 随机 UA。
+  参数：url 为目标地址（-u，必填，带参数的注入点）；
+  data 为 POST 数据（--data）；cookie 为 Cookie（--cookie，登录后注入常用）；
+  dbms 指定数据库类型（--dbms，如 mysql/postgres，可加快检测）；
+  level 为检测等级（--level 1-5，默认 1，越高覆盖面越广但越慢）；
+  risk 为风险等级（--risk 1-3，3 含 OR 型注入可能写坏数据，慎用）；
+  technique 指定技术（--technique，如 BEUSTQ）；
+  additional_args 追加原始参数（如 --dbs --tables --dump --threads 5）。
+  常见坑：注入检测非常慢且噪音大，先手工定位疑似参数再指定 -p；禁止对非授权目标使用。
+  示例：sqlmap --batch -u "http://10.0.0.5/item.php?id=1" --dbs
+        sqlmap --batch -u "http://10.0.0.5/login" --data "u=1&p=2" --cookie "PHPSESSID=x" --level 3 --risk 1
+parameters:
+  - name: "url"
+    type: "string"
+    description: "含参数的注入点 URL"
+    flag: "-u"
+    required: true
+  - name: "data"
+    type: "string"
+    description: "POST 请求体，如 \"u=1&p=2\""
+    flag: "--data"
+    required: false
+  - name: "cookie"
+    type: "string"
+    description: "Cookie 字符串"
+    flag: "--cookie"
+    required: false
+  - name: "dbms"
+    type: "string"
+    description: "数据库类型，如 mysql、postgres"
+    flag: "--dbms"
+    required: false
+  - name: "level"
+    type: "integer"
+    description: "检测等级 1-5，默认 1"
+    flag: "--level"
+    required: false
+  - name: "risk"
+    type: "integer"
+    description: "风险等级 1-3，默认 1，3 可能破坏数据"
+    flag: "--risk"
+    required: false
+  - name: "technique"
+    type: "string"
+    description: "注入技术，如 BEUSTQ"
+    flag: "--technique"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --dbs --dump"
+    format: "positional"
+    required: false
+category: "web"
+requires_root: false
+interactive: false
+notes: "必须 --batch 非交互；--risk 3 可能修改/删除数据"

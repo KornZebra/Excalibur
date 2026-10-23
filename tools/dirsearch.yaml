@@ -1,0 +1,45 @@
+name: "dirsearch"
+command: "dirsearch"
+args: ["-q", "--no-color"]
+enabled: true
+short_description: "Web 目录爆破：url + 可选扩展名/字典/线程"
+description: |
+  默认行为：对目标 Web 服务做目录与文件爆破，-q 静默进度、--no-color 关闭彩色输出，
+  便于日志收集。参数：url 为目标地址（-u，必填，含 scheme）；
+  extensions 指定扩展名（-e，如 php,html,txt,bak,zip，留空则用内置列表）；
+  wordlist 指定字典（-w，建议用题目自带或系统常见字典）；
+  threads 为并发线程数（-t，内网可 20-50，过高易被 WAF 封或超时）；
+  additional_args 追加原始参数（如 --exclude-status=404）。
+  常见坑：目录爆破耗时较长，注意执行超时；遇到 403/429 应降低线程；
+  结果默认按状态码过滤，关注 200/301/302/403 与 .git/.bak/.zip 等敏感文件。
+  示例：dirsearch -q --no-color -u http://10.0.0.5/ -e php,html,zip,bak -t 30
+        dirsearch -q --no-color -u http://10.0.0.5/ -w /usr/share/wordlists/dirb/common.txt
+parameters:
+  - name: "url"
+    type: "string"
+    description: "目标 URL，需含 scheme，如 http://10.0.0.5/"
+    flag: "-u"
+    required: true
+  - name: "extensions"
+    type: "string"
+    description: "扩展名列表，如 php,html,txt,bak,zip"
+    flag: "-e"
+    required: false
+  - name: "wordlist"
+    type: "string"
+    description: "字典文件路径"
+    flag: "-w"
+    required: false
+  - name: "threads"
+    type: "integer"
+    description: "并发线程数，内网 20-50"
+    flag: "-t"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --exclude-status=404"
+    format: "positional"
+    required: false
+category: "recon"
+requires_root: false
+interactive: false

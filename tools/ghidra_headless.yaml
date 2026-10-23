@@ -1,0 +1,53 @@
+name: "ghidra_headless"
+command: "analyzeHeadless"
+args: []
+enabled: true
+short_description: "Ghidra 无界面反编译：项目目录/名 + -import 二进制"
+description: |
+  默认行为：以无头模式运行 Ghidra 反编译与分析，不弹出 GUI，适合自动化流水线。
+  参数：project_dir 为 Ghidra 项目存放目录（必填，第 1 个位置参数，
+  建议放 {{WORKSPACE}}/ghidra_proj）；project_name 为项目名（必填，第 2 个位置参数）；
+  import_file 指定要导入分析的二进制（-import，通常必给）；
+  post_script 指定导入后执行的脚本（-postScript，如导出反编译文本的脚本）；
+  delete_project 为 true 时分析完成后删除项目（-deleteProject）；
+  additional_args 追加原始参数（如 -analysisTimeoutPerFile 300）。
+  常见坑：需要正确设置 JAVA_HOME 并安装 Ghidra（analyzeHeadless 在
+  $GHIDRA_HOME/support/ 下），未安装时会标记 unavailable；
+  分析大二进制很慢，务必用 -analysisTimeoutPerFile 限制时间；项目目录需可写。
+  示例：analyzeHeadless {{WORKSPACE}}/ghidra_proj ctf -import ./chall -deleteProject
+        analyzeHeadless {{WORKSPACE}}/ghidra_proj ctf -import ./chall -postScript Decompile.java
+parameters:
+  - name: "project_dir"
+    type: "string"
+    description: "Ghidra 项目目录，建议 {{WORKSPACE}}/ghidra_proj"
+    required: true
+    position: 1
+  - name: "project_name"
+    type: "string"
+    description: "Ghidra 项目名称"
+    required: true
+    position: 2
+  - name: "import_file"
+    type: "string"
+    description: "要导入分析的二进制文件路径（-import）"
+    flag: "-import"
+    required: false
+  - name: "post_script"
+    type: "string"
+    description: "导入后执行的 Ghidra 脚本（-postScript）"
+    flag: "-postScript"
+    required: false
+  - name: "delete_project"
+    type: "boolean"
+    description: "为 true 时分析完删除项目（-deleteProject）"
+    flag: "-deleteProject"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -analysisTimeoutPerFile 300"
+    format: "positional"
+    required: false
+category: "reverse"
+requires_root: false
+interactive: false
+notes: "需要安装 Ghidra 并配置 JAVA_HOME；未安装时加载器会标记 unavailable"

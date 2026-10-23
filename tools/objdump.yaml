@@ -1,0 +1,43 @@
+name: "objdump"
+command: "objdump"
+args: ["-M", "intel"]
+enabled: true
+short_description: "反汇编：binary + 反汇编/符号/指定节（Intel 语法）"
+description: |
+  默认行为：以 Intel 语法（-M intel）分析 ELF，默认不反汇编，需显式选择动作。
+  参数：binary 为待分析文件（必填）；disassemble 为 true 时反汇编代码段（-d，
+  加 additional_args 的 -S 可混合源码）；symbols 为 true 时输出符号表（-t）；
+  section 指定节（-j，如 .plt、.got、.rodata）；additional_args 追加原始参数
+  （如 -s -j .data 转储数据、-R 查看动态重定位、--start-address=0x... 限定范围）。
+  常见坑：输出极长，务必用 -j/--start-address 限定或重定向到文件；
+  PIE 程序的地址是偏移量，需加上运行时基址；32/64 位指令集不同，看错会误解。
+  示例：objdump -M intel -d -j .text ./chall
+        objdump -M intel -s -j .data ./chall
+parameters:
+  - name: "binary"
+    type: "string"
+    description: "待分析的 ELF 文件路径"
+    required: true
+    position: 1
+  - name: "disassemble"
+    type: "boolean"
+    description: "为 true 时反汇编（-d）"
+    flag: "-d"
+    required: false
+  - name: "symbols"
+    type: "boolean"
+    description: "为 true 时输出符号表（-t）"
+    flag: "-t"
+    required: false
+  - name: "section"
+    type: "string"
+    description: "指定节，如 .text、.plt、.rodata"
+    flag: "-j"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -s -R --start-address=0x1000"
+    format: "positional"
+    required: false
+category: "reverse"
+requires_root: false

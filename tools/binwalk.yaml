@@ -1,0 +1,48 @@
+name: "binwalk"
+command: "binwalk"
+args: []
+enabled: true
+short_description: "固件/隐写分析：file + 可选提取(-e)/熵分析"
+description: |
+  默认行为：扫描文件中的嵌入签名（压缩包、文件系统、图片、可执行文件等），
+  常用于固件、隐写、杂项题的分解。
+  参数：file 为待分析文件（必填）；extract 为 true 时提取识别出的内容（-e，
+  会在当前目录生成 _file.extracted 目录，注意写盘与磁盘占用）；
+  matryoshka 为 true 时递归提取（-M，可能非常耗时）；
+  entropy 为 true 时做熵分析以定位加密/压缩区段（-E）；
+  additional_args 追加原始参数（如 --dd=".*" 提取所有内容、-y 类型过滤）。
+  常见坑：-e 需要在可写目录运行并会产生大量文件，建议在 {{WORKSPACE}} 下执行；
+  新版 binwalk 的 -e 依赖系统工具（7z、unsquashfs 等），缺失时会提示；
+  提取后要手动 file/tree 检查产物，binwalk 不会自动递归到底。
+  示例：binwalk ./firmware.bin
+        binwalk -e -M ./stego.png
+parameters:
+  - name: "file"
+    type: "string"
+    description: "待分析的文件路径"
+    required: true
+    position: 1
+  - name: "extract"
+    type: "boolean"
+    description: "为 true 时提取识别内容（-e），会写盘"
+    flag: "-e"
+    required: false
+  - name: "matryoshka"
+    type: "boolean"
+    description: "为 true 时递归提取（-M），可能很慢"
+    flag: "-M"
+    required: false
+  - name: "entropy"
+    type: "boolean"
+    description: "为 true 时做熵分析（-E）"
+    flag: "-E"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --dd=\".*\""
+    format: "positional"
+    required: false
+category: "reverse"
+requires_root: false
+dangerous: false
+notes: "提取会在当前工作目录写盘，可能占用较多空间"

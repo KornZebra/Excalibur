@@ -1,0 +1,39 @@
+name: "ropgadget"
+command: "ROPgadget"
+args: []
+enabled: true
+short_description: "ROP gadget 搜索：binary + 可选过滤/深度"
+description: |
+  默认行为：扫描目标二进制或 libc 中的 ROP gadgets，列出可用于构造 ROP 链的
+  指令序列（pop rdi; ret 等）。
+  参数：binary 为待分析文件（--binary，必填）；
+  only 过滤 gadget 类型（--only，如 "pop|ret"、"syscall"、"jmp"）；
+  depth 限制指令深度（--depth，默认 10，越大越慢越全）；
+  additional_args 追加原始参数（如 --nojop、--multibr、--badbytes 0a）。
+  常见坑：大文件（如 libc）全量扫描较慢，建议先用 --only 缩小范围；
+  含 syscall 的题要重点搜 "syscall; ret"；注意地址对齐与 badbytes（如换行 0x0a）。
+  示例：ROPgadget --binary ./chall --only "pop|ret"
+        ROPgadget --binary ./libc.so.6 --only "syscall|ret" --depth 6
+parameters:
+  - name: "binary"
+    type: "string"
+    description: "待分析的二进制或库文件路径"
+    flag: "--binary"
+    required: true
+  - name: "only"
+    type: "string"
+    description: "过滤指令，如 \"pop|ret\" 或 \"syscall\""
+    flag: "--only"
+    required: false
+  - name: "depth"
+    type: "integer"
+    description: "gadget 最大指令深度，默认 10"
+    flag: "--depth"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --nojop --multibr"
+    format: "positional"
+    required: false
+category: "pwn"
+requires_root: false

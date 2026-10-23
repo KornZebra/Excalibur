@@ -1,0 +1,42 @@
+name: "netcat"
+command: "nc"
+args: ["-v", "-w", "5"]
+enabled: true
+short_description: "网络连接/收发：host + port，带 -w 超时防挂死"
+description: |
+  默认行为：以详细模式（-v）连接目标 host:port，并设置连接/等待超时 -w 5 秒。
+  重点：nc 本质是交互式工具，直接裸跑会一直等待 stdin 而挂死；必须通过管道
+  喂入数据（如 `echo -e "GET / HTTP/1.0\r\n\r\n" | nc -w 5 10.0.0.5 80`），
+  或使用 additional_args 传 -q 1（EOF 后 1 秒退出）、-N（EOF 后立即关闭）。
+  参数：host 为目标主机（必填）；port 为目标端口（必填）；
+  listen 为 true 时进入监听模式（-l，用于接收反弹 shell，仅限授权靶场）；
+  additional_args 追加原始参数（如 -q 1、-N、-u UDP、-e /bin/sh 反弹）。
+  常见坑：不喂 stdin 一定挂死；UDP 需 -u；反弹 shell 仅在题目授权环境内使用；
+  可用 nc -zv host port 做端口连通性探测。
+  示例：echo -e "GET / HTTP/1.0\r\n\r\n" | nc -w 5 10.0.0.5 80
+        nc -zv -w 5 10.0.0.5 1-1000
+parameters:
+  - name: "host"
+    type: "string"
+    description: "目标主机（仅限题目环境）"
+    required: true
+    position: 1
+  - name: "port"
+    type: "integer"
+    description: "目标端口"
+    required: true
+    position: 2
+  - name: "listen"
+    type: "boolean"
+    description: "为 true 时进入监听模式（-l）"
+    flag: "-l"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -q 1 -N -u"
+    format: "positional"
+    required: false
+category: "misc"
+requires_root: false
+interactive: false
+notes: "必须管道喂入 stdin 或加 -q 1/-N，否则会等待输入挂死；小于 1024 的监听端口需 root"

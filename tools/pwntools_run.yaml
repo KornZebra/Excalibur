@@ -1,0 +1,30 @@
+name: "pwntools_run"
+command: "python3"
+args: ["{{ROOT}}/tools/scripts/run_pwntools.py"]
+enabled: true
+short_description: "运行 pwntools 脚本：script.py，子进程带超时保护"
+description: |
+  默认行为：通过项目自研包装器 {{ROOT}}/tools/scripts/run_pwntools.py 在子进程中
+  运行 pwntools 利用脚本，带超时保护，避免脚本内 process()/recv() 长时间阻塞
+  导致执行器挂死。
+  参数：script 为待运行的 pwntools 脚本路径（必填，放最后，如
+  {{WORKSPACE}}/exp.py）；additional_args 追加传给该脚本的参数。
+  常见坑：脚本内 remote() 连接题目靶机、process() 启动本地二进制；
+  交互式 shell 不要用 interactive()，应改为发送命令后 recv 输出；
+  先在脚本里设 context.log_level='error' 减少噪音，并显式 flush/print flag。
+  示例：python3 {{ROOT}}/tools/scripts/run_pwntools.py {{WORKSPACE}}/exp.py
+        python3 {{ROOT}}/tools/scripts/run_pwntools.py {{WORKSPACE}}/exp.py --remote
+parameters:
+  - name: "script"
+    type: "string"
+    description: "pwntools 利用脚本路径，如 {{WORKSPACE}}/exp.py"
+    required: true
+    format: "positional"
+  - name: "additional_args"
+    type: "string"
+    description: "追加传给目标脚本的参数"
+    format: "positional"
+    required: false
+category: "pwn"
+requires_root: false
+interactive: false

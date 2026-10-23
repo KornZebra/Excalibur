@@ -1,0 +1,55 @@
+name: "curl"
+command: "curl"
+args: ["-sS", "-L"]
+enabled: true
+short_description: "通用 HTTP 客户端：url + method/header/data/输出"
+description: |
+  默认行为：静默（-sS）跟随跳转（-L）请求目标 URL，把响应正文输出到 stdout，
+  适合下载附件、调用 API、验证注入结果。
+  参数：url 为目标地址（必填，含 scheme）；method 指定方法（-X）；
+  header 添加请求头（-H，如 "Content-Type: application/json"）；
+  data 提交请求体（-d，表单默认 POST，JSON 请配合 header）；
+  output 保存响应到文件（-o，路径建议放在工作区，如 {{WORKSPACE}}/resp.bin）；
+  insecure 为 true 时跳过 TLS 校验（-k）；additional_args 追加原始参数。
+  常见坑：二进制响应（图片/压缩包）必须用 -o 落盘再分析，直接读 stdout 会乱码；
+  下载题目附件时可用 additional_args 传 -O -J 或 -o 指定路径。
+  示例：curl -sS -L -o {{WORKSPACE}}/file.zip http://10.0.0.5/file.zip
+        curl -sS -X POST -H "Content-Type: application/json" -d '{"a":1}' http://10.0.0.5/api
+parameters:
+  - name: "url"
+    type: "string"
+    description: "目标 URL，需含 scheme"
+    required: true
+    position: 1
+  - name: "method"
+    type: "string"
+    description: "请求方法 GET/POST/PUT/DELETE 等"
+    flag: "-X"
+    required: false
+  - name: "header"
+    type: "string"
+    description: "请求头，如 \"Content-Type: application/json\""
+    flag: "-H"
+    required: false
+  - name: "data"
+    type: "string"
+    description: "请求体，如 \"a=1&b=2\""
+    flag: "-d"
+    required: false
+  - name: "output"
+    type: "string"
+    description: "保存响应的文件路径，建议放 {{WORKSPACE}}"
+    flag: "-o"
+    required: false
+  - name: "insecure"
+    type: "boolean"
+    description: "为 true 时跳过 TLS 证书校验（-k）"
+    flag: "-k"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -O -J 或 --max-time 20"
+    format: "positional"
+    required: false
+category: "web"
+requires_root: false

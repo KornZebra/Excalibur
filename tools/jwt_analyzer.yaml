@@ -1,0 +1,40 @@
+name: "jwt_analyzer"
+command: "python3"
+args: ["{{ROOT}}/tools/scripts/jwt_analyzer.py"]
+enabled: true
+short_description: "JWT 分析：解析 token + 弱密钥爆破/验签"
+description: |
+  默认行为：调用项目自研脚本 {{ROOT}}/tools/scripts/jwt_analyzer.py 解析 JWT 结构
+  （header/payload/签名算法），并可对 HMAC 类弱密钥做字典爆破与验签。
+  参数：token 为待分析的 JWT 字符串（必填，形如 aaa.bbb.ccc，放最后一位）；
+  secret 为已知密钥（--secret，用于直接验证签名）；
+  wordlist 为弱密钥字典（--wordlist，用于爆破，如 jwt.secrets.list）；
+  additional_args 追加原始参数。
+  常见坑：脚本按 `python3 jwt_analyzer.py <token> [--secret s] [--wordlist w]` 调用，
+  token 中含 '.' 无需转义但建议整体加引号；爆破耗时与字典大小成正比；
+  若算法为 RS256，重点检查是否可篡改为 HS256 并用公钥当 HMAC 密钥（alg 混淆）。
+  示例：python3 {{ROOT}}/tools/scripts/jwt_analyzer.py "eyJhbG...Sx"
+        python3 {{ROOT}}/tools/scripts/jwt_analyzer.py "eyJhbG...Sx" --wordlist /usr/share/wordlists/jwt.secrets.list
+parameters:
+  - name: "token"
+    type: "string"
+    description: "待分析的 JWT 字符串"
+    required: true
+    format: "positional"
+  - name: "secret"
+    type: "string"
+    description: "已知 HMAC 密钥，用于验签"
+    flag: "--secret"
+    required: false
+  - name: "wordlist"
+    type: "string"
+    description: "弱密钥爆破字典路径"
+    flag: "--wordlist"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数"
+    format: "positional"
+    required: false
+category: "web"
+requires_root: false

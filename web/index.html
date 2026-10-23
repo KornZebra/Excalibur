@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>湖中剑</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="stylesheet" href="css/style.css">
+<script>
+/* 主题预置（U1）：必须在样式生效前跑，避免首屏闪主题。
+   light 蓝白（默认）| dark 蓝暗 | retro 绿色复古 —— 详见 js/theme.js */
+(function () {
+  var themes = ['light', 'dark', 'retro'];
+  var stored = null;
+  try { stored = window.localStorage.getItem('ctfa.theme'); } catch (e) { stored = null; }
+  var theme = themes.indexOf(stored) >= 0 ? stored : 'light';
+  if (!stored && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    theme = 'dark';
+  }
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ============================ 顶栏 ============================ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button type="button" class="icon-btn menu-btn" id="btn-menu"
+              aria-label="打开菜单" aria-expanded="false" aria-controls="side-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+      </button>
+      <img class="brand-logo" src="logo.png" alt="湖中剑 logo">
+      <span class="brand-name">湖中剑</span>
+      <span class="brand-sub">Excalibur</span>
+    </div>
+
+    <nav class="view-tabs" id="view-tabs" aria-label="主视图切换">
+      <button type="button" class="tab" data-route="/dashboard">
+        <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+        <span>看板</span>
+      </button>
+      <button type="button" class="tab on" data-route="/chat">
+        <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>对话</span>
+      </button>
+      <button type="button" class="tab" data-route="/tools">
+        <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <span>工具</span>
+      </button>
+      <button type="button" class="tab" data-route="/agents">
+        <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+        <span>子代理</span>
+      </button>
+      <button type="button" class="tab" data-route="/config">
+        <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+        <span>配置</span>
+      </button>
+      <button type="button" class="tab" data-route="/projects">
+        <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/><path d="M8 10v4"/><path d="M12 10v2"/><path d="M16 10v6"/></svg>
+        <span>项目</span>
+      </button>
+      <button type="button" class="tab" data-route="/competition">
+        <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        <span>竞赛</span>
+      </button>
+    </nav>
+
+    <div class="topbar-right">
+      <span class="chip" id="health-chip" data-tone="">● 连接中…</span>
+      <span class="chip" id="mode-chip">单代理</span>
+      <div class="theme-switch" id="theme-switch" role="group" aria-label="主题切换"></div>
+      <button type="button" class="icon-btn" id="btn-minimal" title="极简隐藏模式（新窗口）" aria-label="极简隐藏模式">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+      </button>
+      <button type="button" class="icon-btn" id="btn-refresh" title="刷新全部数据">⟳</button>
+    </div>
+  </header>
+
+  <!-- ============================ 左侧栏 ============================ -->
+  <aside class="sidebar sidebar-left">
+
+    <!-- 平板 / 移动端抽屉：头部 + 导航链接（桌面端隐藏，导航见顶栏） -->
+    <div class="drawer-head">
+      <img class="brand-logo" src="logo.png" alt="湖中剑 logo">
+      <span class="brand-name">湖中剑</span>
+      <button type="button" class="icon-btn" id="btn-drawer-close" aria-label="关闭菜单">✕</button>
+    </div>
+    <nav class="side-nav" id="side-nav" aria-label="主视图切换（平板 / 移动端）">
+      <button type="button" class="side-nav-item" data-route="/dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+        <span>看板</span>
+      </button>
+      <button type="button" class="side-nav-item on" data-route="/chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>对话</span>
+      </button>
+      <button type="button" class="side-nav-item" data-route="/tools">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <span>工具</span>
+      </button>
+      <button type="button" class="side-nav-item" data-route="/agents">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+        <span>子代理</span>
+      </button>
+      <button type="button" class="side-nav-item" data-route="/config">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+        <span>配置</span>
+      </button>
+      <button type="button" class="side-nav-item" data-route="/projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/><path d="M8 10v4"/><path d="M12 10v2"/><path d="M16 10v6"/></svg>
+        <span>项目</span>
+      </button>
+      <button type="button" class="side-nav-item" data-route="/competition">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        <span>竞赛</span>
+      </button>
+    </nav>
+
+    <!-- Logo + 合规声明 -->
+    <section class="side-block compliance">
+      <div class="compliance-logo">
+        <div>
+          <div class="compliance-sub">未被见证的黎明</div>
+        </div>
+      </div>
+      <p class="compliance-text">
+        无数长夜之下，骑士挥剑奔赴黎明，自幽沉湖心递来的锋芒，曾许诺予执剑者破晓的权柄。
+      </p>
+    </section>
+
+    <!-- 模式切换 -->
+    <section class="side-block">
+      <div class="side-title">运行模式</div>
+      <div class="seg" id="mode-switch" role="group" aria-label="代理模式">
+        <button type="button" data-mode="single" class="on">单代理</button>
+        <button type="button" data-mode="multi">多代理</button>
+      </div>
+      <label class="field" id="orch-field" hidden>
+        <span class="field-label">编排策略</span>
+        <select id="orchestration">
+          <option value="deep">Deep（深度编排）</option>
+          <option value="plan_execute">plan_execute（先规划后执行）</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- 会话列表 -->
+    <section class="side-block grow only">
+      <div class="side-head">
+        <span class="side-title">会话</span>
+        <button type="button" class="mini-btn" id="btn-bulk-mode" aria-pressed="false">批量管理</button>
+        <button type="button" class="mini-btn" id="btn-new-conv">＋ 新建</button>
+      </div>
+      <div class="bulk-bar" id="bulk-bar" hidden>
+        <span id="bulk-count">已选 0 / 最多 100</span>
+        <button type="button" class="mini-btn" id="btn-bulk-all">全选/清空</button>
+        <button type="button" class="mini-btn danger" id="btn-bulk-delete" disabled>删除选中</button>
+      </div>
+      <ul class="list scroll" id="conversation-list"></ul>
+    </section>
+
+  </aside>
+
+  <!-- 左栏折叠按钮（U35c：桌面端常驻屏幕左缘；≤1024 抽屉模式由 ☰ 接管，按钮隐藏） -->
+  <button type="button" class="aside-fold aside-fold-left" id="aside-left-fold"
+          title="收起导航栏" aria-label="收起/展开左侧导航栏">
+    <svg class="ic-fold" viewBox="0 0 12 12" width="12" height="12" aria-hidden><path d="M7.5 3L4.5 6L7.5 9" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg class="ic-unfold" viewBox="0 0 12 12" width="12" height="12" aria-hidden><path d="M4.5 3L7.5 6L4.5 9" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <!-- ============================ 中间主区 ============================ -->
+  <main class="main" id="main">
+
+    <!-- 对话视图 -->
+    <section class="view" data-view="chat">
+      <!-- todo 进度条：固定在主区顶部 -->
+      <div class="todo-bar" id="todo-bar" hidden></div>
+
+      <div class="progress-line" id="progress-line" hidden></div>
+
+      <div class="timeline" id="timeline">
+        <div class="tl-inner" id="tl-inner"></div>
+      </div>
+
+      <button type="button" class="scroll-bottom" id="scroll-bottom" hidden>↓ 回到底部</button>
+      <div class="usage-badge" id="usage-badge">⚡ 模型调用 0 · 输入 0 · 输出 0 · 合计 0</div>
+    </section>
+
+    <!-- 数据看板视图（U14） -->
+    <section class="view" data-view="dashboard" hidden>
+      <h2 class="view-title">数据看板<span class="view-hint">解题总量 · 成功率 · FLAG 捕获 · 进行中任务</span></h2>
+      <div class="view-body" id="dashboard-view"></div>
+    </section>
+
+    <!-- 项目（比赛）视图 -->
+    <section class="view" data-view="projects" hidden>
+      <h2 class="view-title">项目（比赛）<span class="view-hint">黑板聚合 · 项目报告</span></h2>
+      <div class="admin-toolbar">
+        <button type="button" class="btn primary" id="btn-project-new">＋ 新建项目</button>
+        <button type="button" class="btn" id="btn-project-refresh">刷新</button>
+        <span class="admin-info">项目把一次比赛的会话、flag、挑战与黑板聚合在一起</span>
+      </div>
+      <div id="project-list"></div>
+      <div id="project-report" hidden></div>
+      <div class="view-body" id="project-detail"></div>
+    </section>
+
+    <!-- 工具视图 -->
+    <section class="view" data-view="tools" hidden>
+      <h2 class="view-title">工具管理 <span class="view-hint"></span></h2>
+      <div class="admin-toolbar">
+        <button type="button" class="btn primary" id="btn-tool-new">＋ 新建工具</button>
+        <button type="button" class="btn" id="btn-tool-reload">热重载</button>
+        <span class="admin-info" id="admin-info">内置 0 · 自定义 0 · 解析错误 0</span>
+      </div>
+      <div class="view-body" id="tools-view"></div>
+    </section>
+
+    <!-- 子代理视图 -->
+    <section class="view" data-view="agents" hidden>
+      <h2 class="view-title">子代理管理 <span class="view-hint"></span></h2>
+      <div class="admin-toolbar">
+        <button type="button" class="btn primary" id="btn-agent-new">＋ 新建子代理</button>
+        <button type="button" class="btn" id="btn-agent-reload">热重载</button>
+        <span class="admin-info">内置只读，自定义写入 agents/custom/</span>
+      </div>
+      <div class="view-body" id="agents-view"></div>
+    </section>
+
+    <!-- 配置视图（U7：表单化参数编辑） -->
+    <section class="view" data-view="config" hidden>
+      <h2 class="view-title">配置 <span class="view-hint">分区表单 · 仅提交改动字段</span></h2>
+      <div class="view-body">
+        <div class="config-actions">
+          <button type="button" class="btn primary" id="btn-config-save">保存并写入本地</button>
+          <button type="button" class="btn" id="btn-config-reset">撤销修改</button>
+          <button type="button" class="btn" id="btn-config-reload">重新加载</button>
+          <span class="chip" id="config-dirty" data-tone="warn" hidden>● 有未保存的修改</span>
+        </div>
+        <div class="config-meta">
+          <span class="view-hint" id="config-path-hint">配置文件：读取中…</span>
+          <span class="view-hint" id="config-env-hint" hidden></span>
+        </div>
+        <p class="config-note">
+          按分区修改下方参数即可 —— <strong>只会提交发生变化的字段</strong>，其余配置（含注释与未暴露的字段）保持原样。
+          点「保存并写入本地」会写回配置文件（首次保存自动创建 <code>config.yaml</code>，写前备份为
+          <code>config.yaml.bak</code>），<strong>重启后依然生效</strong>。
+          此处 <code>api_key</code> 为明文（本机单用户工具，请勿截图/外传）；
+          报 401/404 时点模型卡片上的「测试」，它会按该通道真实发一次最小请求并显示服务商原文。
+        </p>
+
+        <!-- 表单主体：由 js/config.js 按声明式 schema 渲染 -->
+        <div class="config-form" id="config-form"></div>
+
+        <!-- 高级：完整 JSON 兜底编辑 -->
+        <details class="config-advanced">
+          <summary>高级：完整配置 JSON（覆盖保存，慎用）</summary>
+          <p class="config-note">
+            此编辑器与上方表单相互独立，用于覆盖表单未暴露的字段（如 custom_agents、extra_body、mcp.servers）。
+            点「按此 JSON 覆盖保存」会以整份 JSON 覆盖配置。
+          </p>
+          <div class="config-actions">
+            <button type="button" class="btn" id="btn-config-raw-reload">重新载入当前值</button>
+            <button type="button" class="btn" id="btn-config-save-raw">按此 JSON 覆盖保存</button>
+          </div>
+          <textarea class="config-editor" id="config-editor" spellcheck="false"></textarea>
+        </details>
+      </div>
+    </section>
+
+
+    <!-- v2 挑战控制台（blackboard 模式：Dispatcher + 账本 + Solver 三栏状态板） -->
+    <section class="view" data-view="competition" hidden>
+      <div class="view-body" id="competition-view"></div>
+    </section>
+
+  </main>
+
+  <!-- ============================ 右侧栏 ============================ -->
+  <aside class="sidebar sidebar-right">
+    <div class="seg seg-sm" id="right-tabs" role="tablist" aria-label="右侧栏">
+      <button type="button" data-tab="facts" class="on" role="tab">黑板</button>
+      <button type="button" data-tab="flags" role="tab">Flag</button>
+    </div>
+
+    <div class="tabpane pane-grow" data-pane="facts">
+      <input type="search" class="search" id="fact-search" placeholder="搜索 facts（key / summary / tags）…">
+      <ul class="list scroll" id="fact-list"></ul>
+      <div class="detail" id="fact-detail"></div>
+    </div>
+
+    <div class="tabpane pane-grow" data-pane="flags" hidden>
+      <ul class="list scroll" id="flag-list"></ul>
+    </div>
+
+  </aside>
+
+  <button type="button" class="aside-fold" id="aside-fold" title="收起功能面板" aria-label="收起/展开功能面板">
+    <svg class="ic-fold" viewBox="0 0 12 12" width="12" height="12" aria-hidden><path d="M4.5 3L7.5 6L4.5 9" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg class="ic-unfold" viewBox="0 0 12 12" width="12" height="12" aria-hidden><path d="M7.5 3L4.5 6L7.5 9" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <!-- ============================ 输入区 ============================ -->
+    <footer class="composer">
+    <div class="hero-intro" id="hero-intro">
+      <div class="hero-headline">
+        <img class="hero-logo" src="logo.png" alt="湖中剑 logo">
+        <span class="hero-title">您好，Excalibur 已就绪！</span>
+      </div>
+      <div class="hero-quote">无数长夜之下，骑士挥剑奔赴黎明，自幽沉湖心递来的锋芒，曾许诺予执剑者破晓的权柄。</div>
+      <div class="hero-sub"></div>
+      <div class="hero-tabs" id="hero-tabs" role="tablist" aria-label="题目类别">
+        <button type="button" class="on" data-cat="all">全部</button>
+        <button type="button" data-cat="web">Web</button>
+        <button type="button" data-cat="pwn">Pwn</button>
+        <button type="button" data-cat="crypto">Crypto</button>
+        <button type="button" data-cat="reverse">Reverse</button>
+        <button type="button" data-cat="misc">Misc</button>
+      </div>
+      <div class="hero-chips" id="hero-chips"></div>
+    </div>
+    <div class="composer-card">
+      <div class="attach-chips" id="attach-chips" hidden aria-label="待发送附件"></div>
+      <textarea id="input" rows="2" spellcheck="false"
+        placeholder="描述目标或直接粘贴题目… Ctrl / Cmd + Enter 发送，+ 或拖拽加附件"></textarea>
+      <div class="composer-bar">
+        <div class="composer-bar-left">
+          <button type="button" class="btn icon-btn attach-btn" id="btn-attach"
+            title="添加附件（也可拖拽文件到对话区，或直接粘贴）" aria-label="添加附件">+</button>
+          <input type="file" id="attach-input" multiple hidden>
+          <label class="project-pick" title="把当前会话归属到某个项目（可随时移出）">项目
+            <select id="project-select" disabled></select>
+            <span class="pick-caret" aria-hidden="true">▾</span>
+          </label>
+          <div class="reviewer-pop" id="reviewer-bar">
+        <button type="button" class="reviewer-toggle" id="reviewer-toggle"
+                aria-haspopup="true" aria-expanded="false" title="会话审查模式">
+          <span class="reviewer-toggle-label">审查</span>
+          <span id="reviewer-current">—</span>
+          <span class="reviewer-toggle-caret">▸</span>
+        </button>
+        <div class="reviewer-panel" id="reviewer-panel" hidden>
+          <div class="seg seg-sm" id="reviewer-switch" role="group" aria-label="会话审查模式">
+            <button type="button" data-reviewer="human" title="每条命令等待人工确认">🧑 人工审查</button>
+            <button type="button" data-reviewer="audit_agent" title="独立审计模型自动裁决，秒级">🤖 Agent 快速审查</button>
+            <button type="button" data-reviewer="none" title="信任所有命令，无需审查（需确认）">⚡ 完全访问</button>
+          </div>
+          <div class="reviewer-panel-row">
+            <span class="reviewer-hint" id="reviewer-hint">选择会话后可切换</span>
+            <span class="chip" id="reviewer-none-badge" hidden>⚡ 命令不经审查</span>
+            <button type="button" class="mini-btn" id="btn-hitl-history" title="查看审查裁决历史（留痕与执行闭环）">📜 审查历史</button>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="composer-bar-right">
+          <button type="button" class="model-select" id="btn-model" aria-haspopup="listbox"
+                  aria-expanded="false" aria-label="选择模型" title="选择模型">
+            <svg class="model-select-ico" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path d="M8 1.8l5.8 3.2L8 8.2 2.2 5 8 1.8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M2.2 8.2L8 11.4l5.8-3.2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M2.2 11.2L8 14.4l5.8-3.2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+            <span class="model-select-label" id="model-select-label">选择模型</span>
+            <span class="model-select-caret" aria-hidden="true">▾</span>
+          </button>
+          <button type="button" class="btn danger" id="btn-stop" hidden></button>
+          <button type="button" class="composer-send" id="btn-send" data-mode="send" title="发送" aria-label="发送">
+            <svg class="ic-send" viewBox="0 0 16 16" width="16" height="16" aria-hidden><path d="M8.3125 0.980183C8.66767 1.0531 8.97902 1.20418 9.2627 1.43233C9.48724 1.61297 9.73029 1.85793 9.97949 2.10714L14.707 6.83468L13.293 8.24874L9 3.95577V15.0417H7V3.95577L2.70703 8.24874L1.29297 6.83468L6.02051 2.10714C6.26971 1.85793 6.51277 1.61297 6.7373 1.43233C6.97662 1.23986 7.28445 1.04402 7.6875 0.980183C7.8973 0.947006 8.1031 0.95516 8.3125 0.980183Z" fill="currentColor"/></svg>
+            <svg class="ic-stop" viewBox="0 0 16 16" width="16" height="16" aria-hidden><rect x="3" y="3" width="10" height="10" rx="3" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="composer-meta">
+      <span class="queue-hint" id="queue-hint" hidden aria-live="polite"></span>
+      <span id="run-status" data-tone="ok">就绪</span>
+      <span class="spacer"></span>
+      <span class="hint">多代理模式</span>
+    </div>
+  </footer>
+
+</div>
+
+<!-- 平板 / 移动端抽屉遮罩（点击关闭菜单） -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+<!-- 拖拽上传遮罩 -->
+<div class="drop-overlay" id="drop-overlay" aria-hidden="true">
+  <div class="drop-inner">📎 松开即上传附件</div>
+</div>
+
+<!-- 通知浮层（tooltip/toast） -->
+<div class="notices" id="notices" aria-live="polite"></div>
+
+<noscript>
+  <div class="noscript">本页面需要启用 JavaScript 才能与 Agent 后端交互。</div>
+</noscript>
+
+<!-- 脚本加载顺序不可调整：markdown → api → theme → timeline → attachments → challenge → models → app -->
+<script src="js/markdown.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/api.js"></script>
+<script src="js/timeline.js"></script>
+<script src="js/attachments.js"></script>
+<script src="js/conversations.js"></script>
+<script src="js/hitl.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/projects.js"></script>
+<script src="js/challenge.js"></script>
+<script src="js/competition.js"></script>
+<script src="js/challenges.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/config.js"></script>
+<script src="js/models.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

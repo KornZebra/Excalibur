@@ -1,0 +1,46 @@
+name: "openssl_tool"
+command: "openssl"
+args: []
+enabled: true
+short_description: "OpenSSL 子命令：enc/dgst/x509，-in/-k/-out"
+description: |
+  默认行为：以子命令方式调用 OpenSSL（openssl <subcommand> ...），覆盖编码解码、
+  摘要、RSA/证书分析等常见 Crypto 操作。
+  参数：subcommand 为必填子命令（如 enc、dgst、rsa、x509、pkey、s_client，
+  也可写 "enc -d -aes-256-cbc" 但更推荐把算法放 additional_args）；
+  input 指定输入文件（-in，如密文文件 enc.dat）；
+  key 指定口令/密钥（-k，用于 enc 的对称口令或 -passin 场景）；
+  output 指定输出文件（-out）；additional_args 追加原始参数与算法选项。
+  常见坑：openssl 的选项顺序敏感，算法与 -d/-e 必须紧跟子命令，
+  建议用 additional_args 完整书写，如 subcommand=enc，
+  additional_args="-d -aes-256-cbc -pbkdf2 -in enc.dat -k pass"。
+  示例：openssl enc -d -aes-256-cbc -pbkdf2 -in {{WORKSPACE}}/flag.enc -k secret -out {{WORKSPACE}}/flag.txt
+        openssl x509 -in cert.pem -noout -text
+parameters:
+  - name: "subcommand"
+    type: "string"
+    description: "OpenSSL 子命令，如 enc、dgst、rsa、x509、s_client"
+    required: true
+    position: 1
+  - name: "input"
+    type: "string"
+    description: "输入文件（-in）"
+    flag: "-in"
+    required: false
+  - name: "key"
+    type: "string"
+    description: "口令/密钥（-k）"
+    flag: "-k"
+    required: false
+  - name: "output"
+    type: "string"
+    description: "输出文件（-out）"
+    flag: "-out"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数与算法选项，如 \"-d -aes-256-cbc -pbkdf2\""
+    format: "positional"
+    required: false
+category: "crypto"
+requires_root: false

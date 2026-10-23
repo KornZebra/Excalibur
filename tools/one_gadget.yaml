@@ -1,0 +1,34 @@
+name: "one_gadget"
+command: "one_gadget"
+args: []
+enabled: true
+short_description: "查找 libc 的 one-gadget 提权点：libc + 可选约束等级"
+description: |
+  默认行为：在给定 libc 中搜索执行 execve("/bin/sh", ...) 的单条 gadget 及其
+  寄存器/栈约束，常用于只需要覆盖一个返回地址即可拿 shell 的题。
+  参数：libc 为 libc.so.6 路径（必填，放最前）；level 为约束等级（-l，
+  0-1 约束最少但可能不存在，默认 0/-1 逐级尝试）；additional_args 追加原始参数
+  （如 --raw 输出原始偏移、-b 过滤 badbytes）。
+  常见坑：one-gadget 是 Ruby gem，未安装时会标记 unavailable；输出的每个候选都
+  有约束条件（如 [rsp+0x30]==NULL），必须先满足约束否则拿不到 shell；
+  偏移随 libc 版本变化，务必使用题目提供的 libc。
+  示例：one_gadget ./libc.so.6
+        one_gadget -l 1 ./libc.so.6
+parameters:
+  - name: "libc"
+    type: "string"
+    description: "题目提供的 libc.so.6 路径"
+    required: true
+    position: 1
+  - name: "level"
+    type: "integer"
+    description: "约束等级 0-2，越高越容易满足"
+    flag: "-l"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --raw -b 0a"
+    format: "positional"
+    required: false
+category: "pwn"
+requires_root: false

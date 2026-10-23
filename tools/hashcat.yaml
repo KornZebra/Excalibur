@@ -1,0 +1,54 @@
+name: "hashcat"
+command: "hashcat"
+args: ["--quiet", "--force"]
+enabled: true
+short_description: "GPU/CPU 哈希爆破：hash + 模式/字典，须 --quiet 非交互"
+description: |
+  默认行为：以 --quiet 抑制状态刷新、--force 忽略告警运行（容器/无独显环境必需），
+  对给定哈希执行字典或掩码爆破。必须以非交互方式运行，否则可能停在状态界面。
+  参数：hash 为哈希值或哈希文件路径（必填，放最前）；
+  wordlist 为字典路径（如 rockyou.txt，字典攻击时必给，放 hash 之后）；
+  hash_mode 为哈希类型编号（-m，先用 hash_identifier 查询，如 0=MD5、1000=NTLM）；
+  attack_mode 为攻击模式（-a，0 字典 / 3 掩码 / 6 字典+掩码）；
+  rules 为规则文件（-r，如 best64.rule 可显著提升命中率）；
+  additional_args 追加原始参数（如 ?a?a?a?a 掩码、--show 查看已破解）。
+  常见坑：--restore 恢复模式会读写 ~/.hashcat 会话，可能覆盖他人会话，慎用；
+  GPU 驱动不可用时加 --force 走 CPU；长任务注意执行超时并优先用 --show 复用 potfile。
+  示例：hashcat --quiet --force -m 0 -a 0 hash.txt /usr/share/wordlists/rockyou.txt
+        hashcat --quiet --force -m 1000 -a 3 hash.txt '?u?l?l?l?d?d'
+parameters:
+  - name: "hash"
+    type: "string"
+    description: "哈希值或哈希文件路径"
+    required: true
+    format: "positional"
+  - name: "wordlist"
+    type: "string"
+    description: "字典文件路径，字典/混合攻击时必给"
+    required: false
+    format: "positional"
+  - name: "hash_mode"
+    type: "string"
+    description: "哈希类型编号，如 0(MD5)、1000(NTLM)"
+    flag: "-m"
+    required: false
+  - name: "attack_mode"
+    type: "string"
+    description: "攻击模式 0 字典 / 3 掩码 / 6 混合"
+    flag: "-a"
+    required: false
+  - name: "rules"
+    type: "string"
+    description: "规则文件，如 /usr/share/hashcat/rules/best64.rule"
+    flag: "-r"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --show、-O"
+    format: "positional"
+    required: false
+category: "crypto"
+requires_root: false
+interactive: false
+dangerous: false
+notes: "--restore 恢复会话可能覆盖 ~/.hashcat 会话文件；仅破解题目哈希"

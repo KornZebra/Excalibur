@@ -1,0 +1,46 @@
+name: "fcrackzip"
+command: "fcrackzip"
+args: ["-u"]
+enabled: true
+short_description: "ZIP 口令爆破：archive + 字典/字符集，-u 解压验证"
+description: |
+  默认行为：对加密 ZIP 做口令爆破，-u 用 unzip 实际解压来验证口令（更准但略慢）。
+  参数：archive 为待爆破的 zip 文件（必填，位置参数追加到末尾）；
+  wordlist 为字典路径（-p，如 rockyou.txt，配 dictionary=true）；
+  dictionary 为 true 时启用字典模式（-D）；
+  charset 为暴力字符集（-c，如 a1 小写+数字、aA1 大小写+数字，配 additional_args
+  的 -l/-u 长度范围，注意 fcrackzip 用 -l 1-6 指定最小最大长度）；
+  additional_args 追加原始参数（如 "-b -l 1-6" 暴力模式、-v 详细）。
+  常见坑：不传字典或字符集会立即报错退出；暴力模式指数级耗时，务必先试字典；
+  已知明文口令时直接用 unzip -P 更快。
+  示例：fcrackzip -u -D -p /usr/share/wordlists/rockyou.txt {{WORKSPACE}}/chall.zip
+        fcrackzip -u -b -c a1 -l 1-6 {{WORKSPACE}}/chall.zip
+parameters:
+  - name: "archive"
+    type: "string"
+    description: "待爆破的加密 ZIP 文件路径"
+    required: true
+    format: "positional"
+  - name: "wordlist"
+    type: "string"
+    description: "字典文件路径（-p）"
+    flag: "-p"
+    required: false
+  - name: "dictionary"
+    type: "boolean"
+    description: "为 true 时启用字典模式（-D）"
+    flag: "-D"
+    required: false
+  - name: "charset"
+    type: "string"
+    description: "暴力字符集，如 a1、aA1（-c）"
+    flag: "-c"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 \"-b -l 1-6\""
+    format: "positional"
+    required: false
+category: "misc"
+requires_root: false
+interactive: false

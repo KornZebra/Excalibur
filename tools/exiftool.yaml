@@ -1,0 +1,40 @@
+name: "exiftool"
+command: "exiftool"
+args: []
+enabled: true
+short_description: "元数据读取：file + 可选 JSON/全部标签"
+description: |
+  默认行为：读取并打印文件（图片、PDF、Office、音视频等）的全部元数据，
+  是 Misc/隐写题的常规第一步，常见 flag 藏在 Comment、Author、GPS 等字段。
+  参数：file 为待分析文件（必填）；json 为 true 时输出 JSON（-j，便于程序解析）；
+  all_metadata 为 true 时显示重复/全部标签（-a，避免同名标签被去重隐藏）；
+  additional_args 追加原始参数（如 -b -Comment 只输出某字段的值以提取隐藏数据、
+  -ee 提取嵌入文件）。
+  常见坑：exiftool 默认会去重同名标签，找隐藏字段时务必加 -a；
+  用 -b 可导出二进制缩略图/嵌入数据（如 -b -Thumbnail > thumb.jpg）；
+  修改类参数（-Comment=...）会写入文件，本配方仅用于读取，勿传写入参数。
+  示例：exiftool -a ./challenge.jpg
+        exiftool -j -ee ./challenge.pdf
+parameters:
+  - name: "file"
+    type: "string"
+    description: "待分析的文件路径"
+    required: true
+    position: 1
+  - name: "json"
+    type: "boolean"
+    description: "为 true 时以 JSON 输出（-j）"
+    flag: "-j"
+    required: false
+  - name: "all_metadata"
+    type: "boolean"
+    description: "为 true 时显示全部标签，避免去重隐藏（-a）"
+    flag: "-a"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -b -Comment 或 -ee"
+    format: "positional"
+    required: false
+category: "forensics"
+requires_root: false

@@ -1,0 +1,32 @@
+name: "file_cmd"
+command: "file"
+args: ["-k"]
+enabled: true
+short_description: "文件类型识别：target + 可选 MIME 输出"
+description: |
+  默认行为：通过魔数识别文件真实类型（-k 继续检测更多匹配以免被伪造扩展名欺骗），
+  是处理未知附件的第一步，可识别 ELF、PE、压缩包、镜像、脚本、PDF 等。
+  参数：target 为待识别文件（必填）；mime 为 true 时输出 MIME 类型（-i）；
+  additional_args 追加原始参数（如 -z 深入查看压缩包内部类型、-b 不打印文件名）。
+  常见坑：扩展名不可信，务必以 file 结果为准；对压缩包可用 -z 看到内部文件；
+  若识别为 data，说明被加密/未知格式，应改用 binwalk、xxd 进一步分析。
+  示例：file -k ./attachment
+        file -i ./attachment
+parameters:
+  - name: "target"
+    type: "string"
+    description: "待识别的文件路径"
+    required: true
+    position: 1
+  - name: "mime"
+    type: "boolean"
+    description: "为 true 时输出 MIME 类型（-i）"
+    flag: "-i"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -z -b"
+    format: "positional"
+    required: false
+category: "reverse"
+requires_root: false

@@ -1,0 +1,39 @@
+name: "hash_identifier"
+command: "hashid"
+args: []
+enabled: true
+short_description: "哈希类型识别：hash + 扩展模式/输出 hashcat 模式"
+description: |
+  默认行为：根据长度与字符集识别给定哈希串可能的算法类型（MD5、SHA1、
+  bcrypt、NTLM、SHA-512 等），是 Crypto 题与取证题的第一步。
+  参数：hash 为待识别的哈希值（必填，放最前，建议整体加引号）；
+  extended 为 true 时启用扩展模式（-e，扫描更多候选算法，更慢但更全）；
+  hashcat_mode 为 true 时显示对应的 hashcat -m 编号（-m，便于直接接 hashcat）；
+  additional_args 追加原始参数（如 -j 显示 john 格式）。
+  常见坑：识别结果只是"可能"，同一长度可能对应多种算法，需结合题目提示
+  与上下文判断；十六进制长度与字节长度的换算易看错。
+  示例：hashid 5d41402abc4b2a76b9719d911017c592
+        hashid -e -m '$2y$10$abcdefghijklmnopqrstuv'
+parameters:
+  - name: "hash"
+    type: "string"
+    description: "待识别的哈希字符串"
+    required: true
+    position: 1
+  - name: "extended"
+    type: "boolean"
+    description: "为 true 时扫描全部候选算法（-e）"
+    flag: "-e"
+    required: false
+  - name: "hashcat_mode"
+    type: "boolean"
+    description: "为 true 时显示 hashcat 模式编号（-m）"
+    flag: "-m"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -j"
+    format: "positional"
+    required: false
+category: "crypto"
+requires_root: false

@@ -1,0 +1,46 @@
+name: "unzip"
+command: "unzip"
+args: ["-o"]
+enabled: true
+short_description: "解压 ZIP：archive + 输出目录/口令/列出"
+description: |
+  默认行为：解压 ZIP 并覆盖同名文件（-o 避免交互式确认提示导致挂死）。
+  参数：archive 为待解压的 zip 文件（必填，放最前）；
+  output_dir 指定解压目录（-d，建议放 {{WORKSPACE}}/unzip_out）；
+  password 提供口令（-P，已知明文口令时直接传，未知则用 fcrackzip/john 爆破）；
+  list 为 true 时只列出内容不解压（-l，先看清结构再决定解压）；
+  additional_args 追加原始参数（如 -j 不建目录、-O cp936 处理中文文件名乱码）。
+  常见坑：-o 会静默覆盖目标目录中的同名文件，务必先 -l 查看内容并指定新目录；
+  zip 内可能含路径穿越文件名（../），解压前留意；加密 zip 需先爆破口令。
+  示例：unzip -l {{WORKSPACE}}/chall.zip
+        unzip -o {{WORKSPACE}}/chall.zip -d {{WORKSPACE}}/unzip_out
+parameters:
+  - name: "archive"
+    type: "string"
+    description: "待解压的 ZIP 文件路径"
+    required: true
+    position: 1
+  - name: "output_dir"
+    type: "string"
+    description: "解压目录，建议 {{WORKSPACE}}/unzip_out"
+    flag: "-d"
+    required: false
+  - name: "password"
+    type: "string"
+    description: "ZIP 口令（-P）"
+    flag: "-P"
+    required: false
+  - name: "list"
+    type: "boolean"
+    description: "为 true 时仅列出内容不解压（-l）"
+    flag: "-l"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -j -O cp936"
+    format: "positional"
+    required: false
+category: "forensics"
+requires_root: false
+dangerous: false
+notes: "-o 会静默覆盖同名文件，建议先 -l 查看并解压到新目录"

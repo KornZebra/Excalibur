@@ -1,0 +1,26 @@
+name: "whois"
+command: "whois"
+args: ["-H"]
+enabled: true
+short_description: "WHOIS 查询：target 域名/IP 的注册与归属信息"
+description: |
+  默认行为：对给定域名或 IP 发起 WHOIS 查询并打印原始记录，-H 隐藏法律声明头
+  以减少噪音。参数：target 为域名或 IP（必填，仅限题目授权目标）；
+  additional_args 追加原始参数（如 -h whois.example.com 指定服务器）。
+  常见坑：WHOIS 是公网查询，CTF 内网靶标通常无结果，主要用于域名类 Misc 题
+  收集注册人/邮箱/NS 等线索；查询可能因网络受限而超时，失败可改用 Web 搜索。
+  示例：whois flag.ctf
+        whois 8.8.8.8
+parameters:
+  - name: "target"
+    type: "string"
+    description: "待查询的域名或 IP（仅限题目环境）"
+    required: true
+    position: 1
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -h whois.iana.org"
+    format: "positional"
+    required: false
+category: "recon"
+requires_root: false

@@ -1,0 +1,68 @@
+# CTF-Agent 开发环境：一键拉起「练习靶场 + Agent Web 界面」
+#
+#   export CTF_AGENT_API_KEY=sk-xxxx        # 你的模型 API Key
+#   docker compose -f docker-compose.dev.yml up --build
+#
+# 打开 http://127.0.0.1:8080/ 使用界面；练习靶场在 http://127.0.0.1:8081/
+# 练习靶场是**故意存在漏洞**的本地容器（SQL 注入 + 会话越权），仅用于演练，
+# 不要在公网暴露，也不要把里面学到的攻击手法用于任何未授权目标。
+
+services:
+  # ---------------------------------------------------------------------------
+  # 故意存在漏洞的练习靶机（可解：robots.txt → /backup/ → SQLi → /admin）
+  # ---------------------------------------------------------------------------
+  range:
+    build:
+      context: ./docker/practice
+    image: ctf-agent/practice-range:dev
+    container_name: ctf-agent-range
+    environment:
+      PORT: "8080"
+      FLAG: "${PRACTICE_FLAG:-flag{sql1_1nj3ct10n_b4s1cs}}"
+    ports:
+      # 只监听本机回环，避免靶机被局域网扫描到
+      - "127.0.0.1:8081:8080"
+    networks:
+      - ctf-dev
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # CTF-Agent 本体（FastAPI + SSE + 静态前端）
+  # ---------------------------------------------------------------------------
+  agent:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: ctf-agent/agent:dev
+    container_name: ctf-agent
+    depends_on:
+      range:
+        condition: service_healthy
+    environment:
+      CTF_AGENT_API_KEY: "${CTF_AGENT_API_KEY:?请先 export CTF_AGENT_API_KEY=sk-xxx}"
+      CTF_AGENT_BASE_URL: "${CTF_AGENT_BASE_URL:-https://api.deepseek.com/v1}"
+      CTF_AGENT_MODEL: "${CTF_AGENT_MODEL:-deepseek-chat}"
+    command:
+      - python
+      - -m
+      - ctfagent.server
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      # 配置、数据库、工作区、产物落盘目录全部持久化到宿主机
+      - ./config.yaml:/app/config.yaml:ro
+      - ./data:/app/data
+      - ./workspace:/app/workspace
+      # 额外投放的侦察工具/脚本（可选）
+      - ./tools/scripts:/app/tools/scripts:ro
+    networks:
+      - ctf-dev
+    restart: unless-stopped
+
+networks:
+  ctf-dev:
+    driver: bridge

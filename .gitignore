@@ -1,0 +1,25 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# ---- 运行期数据（请勿提交，含解题过程与目标信息）----
+data/
+workspace/
+.dev/
+
+# ---- 本地配置（含 API Key）----
+config.yaml
+.env
+
+# ---- 编辑器 / 系统 ----
+.idea/
+.vscode/
+.DS_Store

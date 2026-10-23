@@ -1,0 +1,37 @@
+name: "volatility3"
+command: "vol"
+args: []
+enabled: true
+short_description: "内存取证：memory_file(-f) + 插件，非交互批处理"
+description: |
+  默认行为：以 Volatility 3（命令名 vol）分析内存镜像，非交互执行指定插件并退出。
+  参数：memory_file 为内存镜像路径（-f，必填，如 mem.raw、memory.dmp）；
+  plugin 为要运行的插件（必填，位置参数追加到末尾，如 windows.pslist、
+  windows.cmdline、windows.netscan、windows.filescan、linux.bash、banners）；
+  additional_args 追加原始参数（如 --pid 1234、-r json 输出格式、
+  windows.dumpfiles --virtaddr 0x... 导出文件）。
+  常见坑：vol 必须指定 -f 与插件，顺序为 `vol -f mem.raw windows.pslist`；
+  首次运行需下载符号表（symbols），离线环境会失败，可预先放置 symbols 目录；
+  插件名带前缀（windows./linux./mac.），写错会报 "not found"。
+  示例：vol -f {{WORKSPACE}}/mem.raw windows.pslist
+        vol -f {{WORKSPACE}}/mem.raw windows.netscan
+parameters:
+  - name: "memory_file"
+    type: "string"
+    description: "内存镜像文件路径（-f）"
+    flag: "-f"
+    required: true
+  - name: "plugin"
+    type: "string"
+    description: "插件名，如 windows.pslist、windows.netscan、linux.bash"
+    required: true
+    format: "positional"
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --pid 1234 -r json"
+    format: "positional"
+    required: false
+category: "forensics"
+requires_root: false
+interactive: false
+notes: "首次使用需联网获取符号表；离线环境需预置 symbols"

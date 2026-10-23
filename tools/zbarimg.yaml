@@ -1,0 +1,39 @@
+name: "zbarimg"
+command: "zbarimg"
+args: []
+enabled: true
+short_description: "二维码/条码识别：image + 可选静默/原始输出"
+description: |
+  默认行为：扫描图片中的二维码/一维条码并打印解码内容，是 Misc 题识别 QR 的
+  首选命令行工具。
+  参数：image 为待识别图片（必填，支持 png/jpg/gif 等）；
+  quiet 为 true 时抑制额外信息（-q，只输出解码结果，便于管道处理）；
+  raw 为 true 时输出原始字节（-r，处理二进制/非文本二维码内容时用）；
+  additional_args 追加原始参数（如 --xml 输出坐标与类型、-Sbinary 强制二进制模式）。
+  常见坑：图片模糊/倾斜/反色会导致识别失败，可先用 exiftool/binwalk 检查是否
+  还有隐藏层；--raw 与 -r 含义不同，注意区分；识别无结果时可试 zbarimg -q --raw。
+  示例：zbarimg -q ./qrcode.png
+        zbarimg --raw ./qrcode.png
+parameters:
+  - name: "image"
+    type: "string"
+    description: "待识别的二维码/条码图片路径"
+    required: true
+    position: 1
+  - name: "quiet"
+    type: "boolean"
+    description: "为 true 时只输出解码结果（-q）"
+    flag: "-q"
+    required: false
+  - name: "raw"
+    type: "boolean"
+    description: "为 true 时输出原始字节（-r）"
+    flag: "-r"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --xml"
+    format: "positional"
+    required: false
+category: "misc"
+requires_root: false

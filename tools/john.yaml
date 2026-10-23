@@ -1,0 +1,48 @@
+name: "john"
+command: "john"
+args: []
+enabled: true
+short_description: "John 口令破解：hash_file + 字典/格式/规则"
+description: |
+  默认行为：使用 John the Ripper 对哈希文件做口令破解，结果写入 ~/.john/john.pot。
+  必须提供 --wordlist 或 --format 等参数，裸跑 john 会进入"无字典/询问模式"或
+  长时间空转，务必用非交互参数避免挂死。
+  参数：hash_file 为待破解文件路径（必填，放最前，内含一行或多行哈希）；
+  wordlist 为字典（--wordlist，如 rockyou.txt）；
+  format 指定哈希格式（--format，如 raw-md5、bcrypt、NT、zip、pdf，指定后可
+  大幅提速）；rules 为 true 时启用变形规则（--rules）；
+  additional_args 追加原始参数（如 --show 查看已破解结果、--incremental 暴力）。
+  常见坑：压缩包/PDF 需先用 zip2john/pdf2john 提取哈希；破解是耗时任务，
+  优先用 --show 复用 pot；解出的明文随后可用 --show 或查看 john.pot。
+  示例：john --wordlist=/usr/share/wordlists/rockyou.txt --format=raw-md5 hashes.txt
+        john --show --format=raw-md5 hashes.txt
+parameters:
+  - name: "hash_file"
+    type: "string"
+    description: "待破解的哈希文件路径"
+    required: true
+    format: "positional"
+  - name: "wordlist"
+    type: "string"
+    description: "字典文件路径"
+    flag: "--wordlist"
+    required: false
+  - name: "format"
+    type: "string"
+    description: "哈希格式，如 raw-md5、bcrypt、NT、zip"
+    flag: "--format"
+    required: false
+  - name: "rules"
+    type: "boolean"
+    description: "为 true 时启用变形规则（--rules）"
+    flag: "--rules"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 --show --incremental"
+    format: "positional"
+    required: false
+category: "crypto"
+requires_root: false
+interactive: false
+notes: "必须带 --wordlist/--format 等非交互参数；破解结果保存于 ~/.john/john.pot"

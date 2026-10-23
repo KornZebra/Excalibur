@@ -1,0 +1,41 @@
+name: "foremost"
+command: "foremost"
+args: []
+enabled: true
+short_description: "文件雕刻/恢复：input + 可选类型/输出目录"
+description: |
+  默认行为：按文件头尾签名从镜像或磁盘文件中雕刻（carve）出被删除/嵌入的文件，
+  默认会写入当前目录下的 output 目录。
+  参数：input 为待分析镜像/文件（-i，必填）；output 为输出目录（-o，
+  建议指定到 {{WORKSPACE}}/foremost_out，避免污染工作目录）；
+  types 为要恢复的类型（-t，如 jpg,png,pdf,zip，留空则用配置文件里的全部类型）；
+  additional_args 追加原始参数（如 -q 快速模式、-T 给输出目录加时间戳、-c 指定配置文件）。
+  常见坑：-o 指向已存在目录时会直接写入并可能覆盖同名文件，务必用新目录；
+  恢复结果体积可能很大，注意磁盘空间；只对题目附件使用。
+  示例：foremost -i {{WORKSPACE}}/disk.img -o {{WORKSPACE}}/foremost_out -t jpg,png,pdf,zip
+        foremost -i {{WORKSPACE}}/disk.img -q -T
+parameters:
+  - name: "input"
+    type: "string"
+    description: "待雕刻的镜像/文件路径（-i）"
+    flag: "-i"
+    required: true
+  - name: "output"
+    type: "string"
+    description: "输出目录，建议 {{WORKSPACE}}/foremost_out"
+    flag: "-o"
+    required: false
+  - name: "types"
+    type: "string"
+    description: "恢复类型，如 jpg,png,pdf,zip"
+    flag: "-t"
+    required: false
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数，如 -q -T"
+    format: "positional"
+    required: false
+category: "forensics"
+requires_root: false
+dangerous: false
+notes: "输出目录已存在时可能覆盖同名文件，建议使用全新目录"

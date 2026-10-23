@@ -1,0 +1,178 @@
+# CTF-Agent 配置文件（复制为 config.yaml 后按需修改）
+# 密钥填写方式：启动服务 → 打开 http://127.0.0.1:8080/ → 「配置」页填写 api_key →
+# 点「保存并写入本地」。密钥只从本配置文件读取，不读环境变量（非密钥字段仍支持 ${VAR}）。
+# 合规声明：本系统仅用于 CTF 竞赛环境、自建靶场（本地 Docker/VM）或获得明确书面授权的目标。
+# 严禁将其用于任何未授权目标。
+
+server:
+  host: "127.0.0.1"
+  port: 8080
+
+ai:
+  default_channel: main
+  # 通道顺序即 failover 顺序；第一个可用通道失败后按序切换。
+  channel_order: [main, fallback]
+  channels:
+    main:
+      name: Main
+      provider: openai_compatible
+      base_url: "https://api.deepseek.com/v1"   # 或任意 openai 兼容端点（Qwen/GLM/vLLM/Ollama）
+      api_key: ""                              # 在 Web 界面「配置」页填写并保存（明文写入本文件）
+                                               # 注意：api_key 不再从环境变量读取
+      model: "deepseek-chat"
+      max_total_tokens: 120000
+      max_completion_tokens: 16384
+      temperature: 0.3
+      timeout_seconds: 600
+      max_retries: 3
+      # reasoning_effort: "medium"              # 支持 reasoning 的模型可开启
+      # extra_body: { "thinking": { "type": "enabled" } }
+    fallback:  # 可选 failover 通道，结构同上；不需要时可整段删除
+      name: Fallback
+      provider: openai_compatible
+      base_url: "${CTF_AGENT_FALLBACK_BASE_URL:-https://api.deepseek.com/v1}"
+      api_key: ""                              # 同上；不需要 failover 通道时整段删除即可
+      model: "deepseek-chat"
+      max_total_tokens: 120000
+      max_completion_tokens: 8192
+
+agent:
+  max_iterations: 500              # 单轮 ReAct 上限（CTF 题目无需 12000 级）
+  sub_agent_max_iterations: 150
+  tool_timeout_seconds: 900        # 单工具硬超时
+  tool_wait_timeout_seconds: 120   # 模型侧等待上限，超时返 execution_id
+  no_output_timeout_seconds: 300   # 连续无输出终止（防交互式挂死）
+  max_concurrent_tools: 8
+  max_tool_result_bytes: 12000     # 单条工具结果超过则全文落盘
+  workspace_root: "workspace"
+  max_history_messages: 120        # 历史消息 reduction 阈值
+  tool_search_enabled: false       # true=仅暴露核心工具+tool_search 动态解锁
+  finalizer_enabled: true          # 证据不足时自动续跑
+  max_finalizer_retries: 2
+  system_prompt_path: ""           # 留空=使用内置系统提示词
+
+  # 子代理覆盖/新增：key 为子代理 id。
+  # - 与 agents/*.md 同 id：只覆盖这里写出的字段（未写的保留文件定义）
+  # - 新 id：直接在配置里定义一个子代理（无需新增 .md 文件）
+  custom_agents: {}
+  # custom_agents:
+  #   web:                         # 覆盖 agents/web.md 的迭代上限与工具集
+  #     max_iterations: 80
+  #     tools: [curl, sqlmap, ffuf, read_file, grep, blackboard_upsert]
+  #   osint:                       # 新增一个不存在的子代理
+  #     name: OSINT 子代理
+  #     description: 负责搜索引擎、域名与人员信息收集（仅限授权目标）
+  #     tools: [curl, whois, dns_enum, read_file, blackboard_upsert]
+  #     max_iterations: 60
+  #     bind_role: recon
+  #     system_prompt: |
+  #       ## 职责
+  #       只做公开信息收集，不触碰目标系统本身。
+  #       ## 结论
+  #       ## 证据
+
+hitl:
+  enabled: true
+  # ⚠ deprecated（U6）：mode 已由 default_reviewer 取代，保留读取但不再生效。
+  #   启动时按 off→none / all→human / whitelist→human 幂等迁移。
+  mode: whitelist
+  # U6a 审查模式：human=人工逐条审 | audit_agent=Agent 快速审查（独立小模型自动裁决）
+  #           | none=完全访问（信任所有命令，仅免审查，执行治理/隔离照常生效）。
+  #           会话级可用 PATCH /api/conversations/{id}/hitl 覆盖（优先级：会话 > 全局）。
+  default_reviewer: human
+  timeout_seconds: 120             # 人工审批等待，超时自动拒绝（fail-closed）
+  cli_auto_approve: false          # CLI 模式是否自动批准（仅限本地靶场调试）
+  tool_whitelist: [read_file, write_file, list_dir, glob, grep, bash_readonly,
+                   blackboard_upsert, blackboard_get, blackboard_list, blackboard_search,
+                   challenge_info, flag_submit, wait_tool_execution, cancel_tool_execution,
+                   get_tool_execution, tool_search, write_todos, report_generate,
+                   analyze_image, search_knowledge_base, download,
+                   # v2 挑战级账本（纯本地 DB 写入：无子进程、无网络、无目标交互）
+                   idea_upsert, idea_transition, memory_write, blackboard_query]
+  audit_agent:                     # U6b Agent 快速审查器（default_reviewer=audit_agent 时生效）
+    model_channel: ""              # 审计专用 AI 通道名；留空复用 ai.default_channel
+    timeout_seconds: 30            # 单次审计调用上限（秒）
+    max_tokens: 512
+    on_failure: reject             # reject=审计失败保守拒绝（默认）| fallback_human=转人工队列
+    allow_edit: false              # true 启用 review_edit：审计可改参后放行（只收窄不扩大）
+    prompt: ""                     # 留空使用内置 CTF 审计提示词
+
+multi_agent:
+  enabled: true
+  default_orchestration: deep      # deep | plan_execute（CTF 场景建议 deep）
+  max_concurrent_sub_agents: 4
+  mode: roles                      # roles=v1 deep 编排（交互对话，行为与 v1 完全一致）
+                                   # blackboard=v2 自主解题：无编排者 LLM，调度由
+                                   # Dispatcher（确定性代码）负责，模型只做 Worker
+
+# ===========================================================================
+# v2 增量段：状态账本 / Solver 纪律 / 外置调度 / 终止判定 / 旁路纠偏
+# 说明：以下开关关闭时，系统行为与 v1 完全一致（见 V2_ASSET_INVENTORY.md 第五节）
+# ===========================================================================
+state_v2:
+  enabled: true                    # 挑战级账本（Idea/Memory 工具）总开关
+  renderer:
+    enabled: true                  # 渲染式上下文：仅在挑战/Solver 上下文生效
+    budget_tokens: 3000            # 状态块硬预算（超预算按 note→evidence→旧 pending 丢弃）
+    idea_top: 6                    # 渲染的 Idea 条数
+    memory_top: 6                  # 渲染的 Memory 条数
+    handoff_max_chars: 900         # 交接包预压缩上限
+
+solver:
+  soft_timeout_minutes: 20         # 无新 Memory 的软超时（先提醒，宽限一轮再停）
+  hard_timeout_minutes: 60         # 单个 Solver 硬超时
+  grace_minutes: 5                 # 软超时后的宽限期
+  conclude_budget_tokens: 2000     # 双阶段收尾调用的预算
+  max_conclude_iterations: 2       # 收尾阶段最多迭代
+  two_phase_conclude: true         # 失败即产出：强制收尾至少沉淀一条 Memory
+
+dispatcher:
+  interval_seconds: 10             # 控制回路轮询间隔
+  stability_window_seconds: 60     # 两次 spawn 的最小间隔（稳定性优先）
+  max_concurrent_solvers: 4        # 并发硬上限（由 Dispatcher 强制，与模型行为无关）
+
+termination:
+  default_time_budget_minutes: 120 # 挑战默认时间预算
+  min_advances_before_exhausted: 1 # 至少完成过 1 次正向推进（explore/reason）才可能判定"图静止"
+
+observer:
+  enabled: true
+  cooldown_per_solver_minutes: 30  # 同一 Solver 的提醒限频
+  max_reminders_per_solver: 2
+  repeat_tool_threshold: 3         # D1：同一工具+参数连续 N 次 → 原地打转
+  no_progress_minutes: 8           # D2：N 分钟无 memory_write/idea_transition → 漂移
+  failure_similarity_threshold: 0.6 # D3：与已有 failure 相似度阈值 → 重复踩坑
+  judge:                           # 可选小模型判官（成本换精度）
+    enabled: false
+    model_channel: ""              # 引用 ai.channels 中的某个通道名
+
+docker_worker:
+  enabled: false                   # 可选 M5：容器化 Worker 隔离（本轮未实现）
+
+blackboard:
+  enabled: true
+  inject_index_limit: 60           # 注入系统提示词的 facts key+summary 条数上限
+  search_limit: 20
+
+knowledge:
+  enabled: true                   # 本地 BM25 技巧库（语料：skills/**.md），零外部依赖
+  corpus_dir: "skills"
+  index_path: "data/knowledge.jsonl"
+  top_k: 5
+  chunk_size: 800
+  chunk_overlap: 120
+
+vision:
+  enabled: false                   # analyze_image 视觉旁路（需一个 VL 模型通道）
+  channel: ""                      # 引用 ai.channels 中的某个通道名
+  max_image_bytes: 8000000
+
+mcp:
+  enabled: false                   # 外部 MCP 工具服务器（需 pip install 'ctf-agent[mcp]'）
+  servers: []
+  # - name: "example"
+  #   transport: "stdio"           # stdio | sse | http
+  #   command: "npx"
+  #   args: ["-y", "@modelcontextprotocol/server-filesystem", "workspace"]
+  #   url: ""
+  #   tool_prefix: "mcp_example_"

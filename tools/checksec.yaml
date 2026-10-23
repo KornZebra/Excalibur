@@ -1,0 +1,27 @@
+name: "checksec"
+command: "checksec"
+args: []
+enabled: true
+short_description: "二进制保护检查：binary 的 NX/PIE/Canary/RELRO"
+description: |
+  默认行为：检查目标 ELF 二进制启用的安全编译选项，输出 Canary、NX、PIE、
+  RELRO、Fortify 等，是 Pwn 题的第一步。
+  参数：binary 为待检查文件路径（template --file={value}，必填，兼容 pwntools
+  的 checksec 与 checksec.sh 两种实现）；additional_args 追加原始参数。
+  常见坑：文件需有可读权限，架构不符（如 ARM）时结果可能不全；
+  若命令不存在，可直接用 `readelf -h/-l/-d` 或 `pwn checksec` 替代。
+  示例：checksec --file=./chall
+        checksec --file=./libc.so.6
+parameters:
+  - name: "binary"
+    type: "string"
+    description: "待检查的 ELF 文件路径"
+    required: true
+    template: "--file={value}"
+  - name: "additional_args"
+    type: "string"
+    description: "追加的原始参数"
+    format: "positional"
+    required: false
+category: "pwn"
+requires_root: false
